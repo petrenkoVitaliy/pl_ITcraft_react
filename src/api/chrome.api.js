@@ -1,34 +1,39 @@
 /*global chrome*/
+import { Logger } from "helpers";
 
-class ChromeApiClass {
+const moduleName = "CHROME_API";
+
+export class ChromeApiClass {
   setData = (key, value) => {
     return new Promise((resolve, reject) => {
       if (!chrome.storage) {
+        Logger.log(moduleName, `cant find chrome.storage`);
         resolve(false);
       }
       chrome.storage.local.set({ [key]: value }, function() {
-        console.log(
-          `CHROME API: value is set to ${key}: ${JSON.stringify(value)}`
+        Logger.log(
+          moduleName,
+          `value is set to ${key}: ${JSON.stringify(value)}`
         );
         resolve(value);
       });
-      resolve(true);
     });
   };
 
   getData = key => {
     return new Promise((resolve, reject) => {
       if (!chrome.storage) {
+        Logger.log(moduleName, `cant find chrome.storage`);
         resolve(false);
       }
       chrome.storage.local.get([key], result => {
-        console.log(
-          `CHROME API: value gotten ${key}: ${JSON.stringify(result)}`
+        Logger.log(
+          moduleName,
+          `value gotten ${key}: ${JSON.stringify(result)}`
         );
+
         resolve(result);
       });
     });
   };
 }
-
-export const ChromeApi = new ChromeApiClass();

@@ -3,6 +3,7 @@ import "./index.css";
 
 export class LoaderComponent extends React.Component {
   render() {
+    // hand loader, just for fun
     return (
       <div id="loader_wrapper">
         <div className="hand">

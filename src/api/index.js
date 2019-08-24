@@ -1,5 +1,3 @@
-import { PlRequestsApi } from './pl.api';
-import { ChromeApi } from './chrome.api';
-import { JiraApi } from './jira.api';
+import { ApiWrapper } from "./api-wrapper";
 
-export { PlRequestsApi, ChromeApi, JiraApi };
+export { ApiWrapper };

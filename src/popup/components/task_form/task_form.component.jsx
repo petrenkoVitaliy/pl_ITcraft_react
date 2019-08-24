@@ -1,52 +1,60 @@
-import React from 'react';
-import { Form, Field, ErrorMessage } from 'formik';
+import React from "react";
+import { Form, Field, ErrorMessage } from "formik";
 
-import withLoad from './load.hoc';
-import formHoc from './form.hoc';
+import withLoad from "./load.hoc";
+import formHoc from "./form.hoc";
 
 class TaskForm extends React.Component {
+  renderField = props => (
+    <div>
+      <Field
+        {...props}
+        type={props.type || "text"}
+        component={props.component || "div"}
+        placeholder={props.component || "please input data"}
+        name={props.name}
+      >
+        {props.renderChildrenFn && props.renderChildrenFn()}
+      </Field>
+      <ErrorMessage name={props.name} component="div" />
+    </div>
+  );
+
   render() {
     const {
       loadedData: { sprintsList }
     } = this.props;
+
+    const fieldsList = [
+      {
+        placeholder: "Title",
+        name: "title"
+      },
+      {
+        placeholder: "Description",
+        name: "description",
+        component: "textarea",
+
+        rows: "4",
+        cols: "40"
+      },
+      {
+        placeholder: "Estimated time (minutes)",
+        name: "time",
+        type: "number"
+      },
+      {
+        component: "select",
+        name: "sprint",
+        renderChildrenFn: () =>
+          sprintsList.map(item => <option value={item.id}>{item.title}</option>)
+      }
+    ];
+
     return (
       <Form>
-        <div>
-          <Field type='text' placeholder='Title' name='title' />
-          <ErrorMessage name='title' component='div' />
-        </div>
-
-        <div>
-          <Field
-            type='text'
-            component='textarea'
-            rows='4'
-            cols='40'
-            placeholder='Description'
-            name='description'
-          />
-          <ErrorMessage name='description' component='div' />
-        </div>
-
-        <div>
-          <Field
-            type='number'
-            placeholder='Estimated time (minutes)'
-            name='time'
-          />
-          <ErrorMessage name='time' component='div' />
-        </div>
-
-        <div>
-          <Field component='select' name='sprint'>
-            {sprintsList.map(item => (
-              <option value={item.id}>{item.title}</option>
-            ))}
-          </Field>
-          <ErrorMessage name='sprint' component='div' />
-        </div>
-
-        <button type='submit'>Submit</button>
+        {fieldsList.map(item => this.renderField(item))}
+        <button type="submit">Submit</button>
       </Form>
     );
   }

@@ -1,81 +1,87 @@
-import React from 'react';
+import React from "react";
 
-import './index.css';
-import { JiraApi, ChromeApi, PlRequestsApi } from '../../../api';
+import { ApiWrapper } from "../../../api";
+import { LoaderComponent } from "../../../loader";
+
+import "./index.css";
 
 export class TaskDetailsComponent extends React.Component {
   state = {
-    taskNumber: '',
-    taskData: '',
-    settingsData: ''
+    taskNumber: "",
+    taskData: ""
   };
 
   async componentDidMount() {
-    await this.getUserDetails();
-    await this.getTaskNumber();
-    await this.uploadTaskData();
+    const taskNumber = await this.getTaskNumber();
+    await this.uploadTaskData(taskNumber);
   }
 
-  getUserDetails = async () => {
-    const data = await ChromeApi.getData('settingsData');
-
-    this.plRequestsApi = new PlRequestsApi(data.settingsData);
-    this.setState({ settingsData: data.settingsData });
-  };
-
   getTaskNumber = async () => {
-    const taskNumber = await JiraApi.getTaskNumber();
+    const taskNumber = await ApiWrapper.jiraApi.getTaskNumber();
 
     this.setState({ taskNumber });
+    return taskNumber;
   };
 
-  uploadTaskData = async () => {
-    const { taskNumber } = this.state;
-    const taskData = await this.plRequestsApi.getTaskDetailsFromAllSprints(
+  uploadTaskData = async taskNumber => {
+    const taskData = await ApiWrapper.plRequestsApi.getTaskDetailsFromAllSprints(
       taskNumber
     );
     this.setState({ taskData });
   };
 
+  renderTaskDetailsField = (label, value) =>
+    value && (
+      <div>
+        <p className="title_label">{`${label}:`}</p>
+        <p className="input_label">{value}</p>
+      </div>
+    );
+
   render() {
-    const { taskNumber, taskData = {} } = this.state;
+    const { taskNumber = "", taskData = {} } = this.state;
+
+    const fieldsList = [
+      {
+        label: "task number",
+        value: taskNumber
+      },
+      {
+        label: "description",
+        value: taskData.description
+      },
+      {
+        label: "path",
+        value: taskData.pathHuman
+      },
+      {
+        label: "time taken",
+        value: taskData["time-taken"]
+      },
+      {
+        label: "time approve",
+        value: taskData["time-approved"]
+      },
+      {
+        label: "time effort",
+        value: taskData["time-effort"]
+      }
+    ];
 
     return taskNumber ? (
-      <div>
-        <div>
-          <p className='title_label'>task number:</p>
-          <p className='input_label'>{taskNumber}</p>
-        </div>
-        <div>
-          <p className='title_label'>title:</p>
-          <p className='input_label'>{taskData.title}</p>
-        </div>
-        <div>
-          <p className='title_label'>description:</p>
-          <p className='input_label'>{taskData.description}</p>
-        </div>
-        <div>
-          <p className='title_label'>path:</p>
-          <p className='input_label'>{taskData.pathHuman}</p>
-        </div>
-        <div>
-          <p className='title_label'>time taken:</p>
-          <p className='input_label'>{taskData['time-taken']}</p>
-        </div>
-        <div>
-          <p className='title_label'>time approve:</p>
-          <p className='input_label'>{taskData['time-approved']}</p>
-        </div>
-        <div>
-          <p className='title_label'>time effort:</p>
-          <p className='input_label'>{taskData['time-effort']}</p>
-        </div>
-        <button type='button' onClick={this.uploadTaskData}>
+      <>
+        {fieldsList.map(({ label, value }) =>
+          this.renderTaskDetailsField(label, value)
+        )}
+        <button type="button" onClick={this.uploadTaskData}>
           Reload
         </button>
-      </div>
+      </>
     ) : (
-      <div>Cant find task number</div>
+      <>
+        <div>Cant find task number</div>
+        <LoaderComponent />
+      </>
     );
   }
 }

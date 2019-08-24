@@ -1,40 +1,60 @@
-import React from 'react';
-import { Form, Field, ErrorMessage } from 'formik';
+import React from "react";
+import { Form, Field, ErrorMessage } from "formik";
 
-import formHoc from './form.hoc';
-import withLoad from './load.hoc';
-import './index.css';
+import { Logger } from "helpers";
+
+import formHoc from "./form.hoc";
+import withLoad from "./load.hoc";
+
+import "./index.css";
 
 export class Settings extends React.Component {
+  renderField = (fieldName, placeHolder, type = "text", disabled = false) => (
+    <div>
+      <label htmlFor={fieldName}>{placeHolder}</label>
+      <Field
+        type={type}
+        placeholder={placeHolder}
+        name={fieldName}
+        disabled={disabled}
+      />
+      <ErrorMessage name={fieldName} component="div" />
+    </div>
+  );
+
   render() {
+    const fieldsList = [
+      {
+        fieldName: "userKey",
+        placeHolder: "userKey"
+      },
+      {
+        fieldName: "managerKey",
+        placeHolder: "managerKey"
+      },
+      {
+        fieldName: "projectId",
+        placeHolder: "projectId",
+        disabled: true
+      },
+      {
+        fieldName: "appKey",
+        placeHolder: "appKey",
+        disabled: true
+      }
+    ];
+
     return (
       <Form>
+        {fieldsList.map(({ fieldName, placeHolder, type, disabled }) =>
+          this.renderField(fieldName, placeHolder, type, disabled)
+        )}
+        <button type="submit">Submit</button>
         <div>
-          <label htmlFor='userKey'>userKey</label>
-          <Field type='text' placeholder='userKey' name='userKey' />
-          <ErrorMessage name='userKey' component='div' />
+          {Logger.getLogs().map(item => (
+            <p>{item}</p>
+          ))}
         </div>
-        <div>
-          <label htmlFor='managerKey'>managerKey</label>
-          <Field type='text' placeholder='managerKey' name='managerKey' />
-          <ErrorMessage name='managerKey' component='div' />
-        </div>
-        <div>
-          <label htmlFor='projectId'>projectId</label>
-          <Field
-            disabled
-            type='text'
-            placeholder='projectId'
-            name='projectId'
-          />
-          <ErrorMessage name='projectId' component='div' />
-        </div>
-        <div>
-          <label htmlFor='appKey'>appKey</label>
-          <Field disabled type='text' placeholder='appKey' name='appKey' />
-          <ErrorMessage name='appKey' component='div' />
-        </div>
-        <button type='submit'>Submit</button>
       </Form>
     );
   }
