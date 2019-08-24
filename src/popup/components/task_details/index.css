@@ -1,0 +1,14 @@
+.title_label {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: yellow;
+  text-transform: uppercase;
+}
+.input_label {
+  color: #d90000;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 600;
+}

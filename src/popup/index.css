@@ -1,4 +1,7 @@
-.App {
-  background: red;
-  width: 500px;
+body {
+  width: 300px;
+  border: 4px solid #d90000;
+  margin: 0;
+  padding: 13px;
+  background: black;
 }

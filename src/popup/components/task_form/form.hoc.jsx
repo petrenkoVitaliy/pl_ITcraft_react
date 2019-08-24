@@ -1,39 +1,38 @@
-import { withFormik } from "formik";
+import { withFormik } from 'formik';
 
 const formHoc = withFormik({
-  mapPropsToValues: () => ({
-    title: "",
-    description: "",
-    time: "",
-    sprint: ""
+  mapPropsToValues: ({ loadedData: { title, sprintsList } }) => ({
+    title: title || '',
+    description: title || '',
+    time: 666,
+    sprint: sprintsList[sprintsList.length - 1].id
   }),
 
-  // Custom sync validation
   validate: values => {
     const errors = {};
 
     if (!values.title) {
-      errors.title = "Required";
+      errors.title = 'Required';
     }
 
     if (!values.description) {
-      errors.description = "Required";
+      errors.description = 'Required';
     }
 
     if (!values.time) {
-      errors.time = "Required";
+      errors.time = 'Required';
     }
     return errors;
   },
 
-  handleSubmit: (values, { setSubmitting }) => {
-    setTimeout(() => {
-      alert(JSON.stringify(values, null, 2));
-      setSubmitting(false);
-    }, 1000);
+  handleSubmit: async (values, { setSubmitting, props }) => {
+    await props.plRequestsApi.createTask(values);
+    console.log(`TaskForm: submitted data:  ${JSON.stringify(values)}`);
+
+    setSubmitting(false);
   },
 
-  displayName: "BasicForm"
+  displayName: 'BasicForm'
 });
 
 export default formHoc;
