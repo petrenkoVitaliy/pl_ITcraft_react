@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react';
 
-import { ApiWrapper } from "../../../api";
-import { LoaderComponent } from "../../../loader";
+import { ApiWrapper } from '../../../api';
+import { LoaderComponent } from '../../../loader';
 
-import "./index.css";
+import './index.css';
 
 export class TaskDetailsComponent extends React.Component {
   state = {
-    taskNumber: "",
-    taskData: ""
+    taskNumber: '',
+    taskData: ''
   };
 
   async componentDidMount() {
@@ -33,38 +33,38 @@ export class TaskDetailsComponent extends React.Component {
   renderTaskDetailsField = (label, value) =>
     value && (
       <div>
-        <p className="title_label">{`${label}:`}</p>
-        <p className="input_label">{value}</p>
+        <p className='title_label'>{`${label}:`}</p>
+        <p className='input_label'>{value}</p>
       </div>
     );
 
   render() {
-    const { taskNumber = "", taskData = {} } = this.state;
+    const { taskNumber = '', taskData = {} } = this.state;
 
     const fieldsList = [
       {
-        label: "task number",
+        label: 'task number',
         value: taskNumber
       },
       {
-        label: "description",
+        label: 'description',
         value: taskData.description
       },
       {
-        label: "path",
+        label: 'path',
         value: taskData.pathHuman
       },
       {
-        label: "time taken",
-        value: taskData["time-taken"]
+        label: 'time taken',
+        value: taskData['time-taken']
       },
       {
-        label: "time approve",
-        value: taskData["time-approved"]
+        label: 'time approve',
+        value: taskData['time-approved']
       },
       {
-        label: "time effort",
-        value: taskData["time-effort"]
+        label: 'time effort',
+        value: taskData['time-effort']
       }
     ];
 
@@ -73,7 +73,7 @@ export class TaskDetailsComponent extends React.Component {
         {fieldsList.map(({ label, value }) =>
           this.renderTaskDetailsField(label, value)
         )}
-        <button type="button" onClick={this.uploadTaskData}>
+        <button type='button' onClick={() => this.uploadTaskData(taskNumber)}>
           Reload
         </button>
       </>

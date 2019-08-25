@@ -1,40 +1,32 @@
-import { withFormik } from "formik";
+import { withFormik } from 'formik';
 
-import { Logger } from "helpers";
+import { Logger, Validator } from 'helpers';
 
-import { ApiWrapper } from "../../../api";
+import { ApiWrapper } from '../../../api';
 
-const moduleName = "SETTINGS_FORM_HOC";
+const moduleName = 'SETTINGS_FORM_HOC';
 
 const formHoc = withFormik({
-  mapPropsToValues: props => props.loadedData,
+  mapPropsToValues: props => ({
+    userKey: props.loadedData['user-key'],
+    managerKey: props.loadedData['manager-key'],
+    projectId: props.loadedData['project-id'],
+    appKey: props.loadedData['user-key']
+  }),
 
-  validate: values => {
-    const errors = {};
-
-    if (!values.userKey) {
-      errors.userKey = "Required";
-    }
-
-    if (!values.managerKey) {
-      errors.managerKey = "Required";
-    }
-
-    if (!values.projectId) {
-      errors.projectId = "Required";
-    }
-
-    if (!values.appKey) {
-      errors.appKey = "Required";
-    }
-    return errors;
-  },
+  validate: values =>
+    Validator.required(values, [
+      'userKey',
+      'managerKey',
+      'projectId',
+      'appKey'
+    ]),
 
   handleSubmit: async (values, { setSubmitting }) => {
     Logger.log(moduleName, `submitted data  ${JSON.stringify(values)}`);
 
     ApiWrapper.plRequestsApi.setUserData(values);
-    ApiWrapper.chromeApi.setData("settingsData", values);
+    ApiWrapper.chromeApi.setData('settingsData', values);
 
     setSubmitting(false);
   }

@@ -1,3 +1,4 @@
-import { Logger } from "./logger";
+import { Logger } from './logger';
+import { Validator } from './validator';
 
-export { Logger };
+export { Logger, Validator };

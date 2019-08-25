@@ -1,33 +1,35 @@
-import { Logger } from "helpers";
+import { Logger } from 'helpers';
 
-const moduleName = "PL_API";
+const moduleName = 'PL_API';
 
 export class PlRequestsApiClass {
-  constructor({ userKey, managerKey, projectId, appKey }) {
+  constructor({ userKey, managerKey } = {}) {
     this.requestData = {
-      "user-key": userKey,
-      "manager-key": managerKey,
-      "app-key": appKey,
-      "project-id": projectId,
-      "per-page": -1 // full data on one page,
+      'user-key': userKey,
+      'manager-key': managerKey,
+      'app-key': 'bc171976c01f30e8ce8bbe9cb0333942:jbjBAsLK3hkGwQE7QQ^Z',
+      'project-id': '2097',
+      'per-page': -1 // full data on one page,
       // 'parent-id': 205696
     };
 
     this.sprints = [];
-    this.tasksList = "";
-    this.sprintIds = "";
-    this.basicUrl = "https://pl.itcraft.co/api/client-v1";
+    this.tasksList = '';
+    this.sprintIds = '';
+    this.basicUrl = 'https://pl.itcraft.co/api/client-v1';
   }
 
   setUserData = data => {
     this.requestData = {
       ...this.requestData,
-      "user-key": data.userKey,
-      "manager-key": data.managerKey
+      'user-key': data.userKey,
+      'manager-key': data.managerKey
     };
   };
 
-  getTaskDetailsFromAllSprints = async (taskNumber = "") => {
+  getUserData = () => this.requestData;
+
+  getTaskDetailsFromAllSprints = async (taskNumber = '') => {
     this.sprintIds = await this.__getSprintsIdsList();
     this.tasksList = await this.__getTasksList(this.sprintIds);
     const task = this.tasksList.find(item => item.title.includes(taskNumber));
@@ -40,12 +42,12 @@ export class PlRequestsApiClass {
   };
 
   getSprints = async () => {
-    const data = { ...this.requestData, query: "Sprint" };
+    const data = { ...this.requestData, query: 'Sprint' };
 
     const res = await fetch(`${this.basicUrl}/tasks/list`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
     }).then(response => response.json());
@@ -62,13 +64,13 @@ export class PlRequestsApiClass {
       description: description,
       effort: time,
       title: title,
-      "parent-id": sprint
+      'parent-id': sprint
     };
 
     const res = await fetch(`${this.basicUrl}/tasks/add`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
     }).then(response => response.json());
@@ -83,12 +85,12 @@ export class PlRequestsApiClass {
     const data = { ...this.requestData };
 
     const queries = sprintsIdsList.map(async item => {
-      data["parent-id"] = item; // to find task inside this sprint
+      data['parent-id'] = item; // to find task inside this sprint
 
       const res = await fetch(`${this.basicUrl}/tasks/list`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       }).then(response => response.json());
@@ -126,9 +128,9 @@ export class PlRequestsApiClass {
     const data = { ...this.requestData, query: taskNumber };
 
     const res = await fetch(`${this.basicUrl}/tasks/list`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
     });

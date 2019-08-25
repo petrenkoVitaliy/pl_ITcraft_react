@@ -6,5 +6,15 @@ form div {
 }
 
 form div input {
-  width: 200px;
+  width: 228px;
+}
+
+.logger {
+  width: 100%;
+  display: block;
+}
+
+.logger p {
+  width: 100%;
+  margin-bottom: 13px;
 }

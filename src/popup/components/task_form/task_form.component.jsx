@@ -1,22 +1,21 @@
-import React from "react";
-import { Form, Field, ErrorMessage } from "formik";
+import React from 'react';
+import { Form, Field, ErrorMessage } from 'formik';
 
-import withLoad from "./load.hoc";
-import formHoc from "./form.hoc";
+import withLoad from './load.hoc';
+import formHoc from './form.hoc';
 
 class TaskForm extends React.Component {
   renderField = props => (
-    <div>
+    <div key={props.name}>
       <Field
         {...props}
-        type={props.type || "text"}
-        component={props.component || "div"}
-        placeholder={props.component || "please input data"}
+        type={props.type || 'text'}
+        component={props.component || 'input'}
+        placeholder={props.placeholder || 'please input data'}
         name={props.name}
-      >
-        {props.renderChildrenFn && props.renderChildrenFn()}
-      </Field>
-      <ErrorMessage name={props.name} component="div" />
+        children={props.renderChildrenFn && props.renderChildrenFn()}
+      />
+      <ErrorMessage name={props.name} component='div' />
     </div>
   );
 
@@ -27,25 +26,25 @@ class TaskForm extends React.Component {
 
     const fieldsList = [
       {
-        placeholder: "Title",
-        name: "title"
+        placeholder: 'Title',
+        name: 'title'
       },
       {
-        placeholder: "Description",
-        name: "description",
-        component: "textarea",
+        placeholder: 'Description',
+        name: 'description',
+        component: 'textarea',
 
-        rows: "4",
-        cols: "40"
+        rows: '4',
+        cols: '40'
       },
       {
-        placeholder: "Estimated time (minutes)",
-        name: "time",
-        type: "number"
+        placeholder: 'Estimated time (minutes)',
+        name: 'time',
+        type: 'number'
       },
       {
-        component: "select",
-        name: "sprint",
+        component: 'select',
+        name: 'sprint',
         renderChildrenFn: () =>
           sprintsList.map(item => <option value={item.id}>{item.title}</option>)
       }
@@ -54,7 +53,7 @@ class TaskForm extends React.Component {
     return (
       <Form>
         {fieldsList.map(item => this.renderField(item))}
-        <button type="submit">Submit</button>
+        <button type='submit'>Submit</button>
       </Form>
     );
   }
