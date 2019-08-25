@@ -4,17 +4,17 @@ import { Form, Field, ErrorMessage } from 'formik';
 import formHoc from './form.hoc';
 import withLoad from './load.hoc';
 
-import './index.css';
+import { Container, Button, Sprite } from 'nes-react';
 
 export class Settings extends React.Component {
   renderField = (fieldName, placeHolder, type = 'text', disabled = false) => (
     <div>
-      <label htmlFor={fieldName}>{placeHolder}</label>
       <Field
         type={type}
         placeholder={placeHolder}
         name={fieldName}
         disabled={disabled}
+        label={placeHolder}
       />
       <ErrorMessage name={fieldName} component='div' />
     </div>
@@ -32,25 +32,32 @@ export class Settings extends React.Component {
       },
       {
         fieldName: 'projectId',
-        placeHolder: 'projectId'
+        placeHolder: 'projectId',
+        disabled: true
       },
       {
         fieldName: 'appKey',
-        placeHolder: 'appKey'
+        placeHolder: 'appKey',
+        disabled: true
       }
     ];
 
     return (
       <Form>
-        {fieldsList.map(({ fieldName, placeHolder, type, disabled }) =>
-          this.renderField(fieldName, placeHolder, type, disabled)
-        )}
-        <button type='submit'>Submit</button>
-        <div className='logger'>
-          {/*Logger.getLogs().map(item => (
+        <Container title='Settings form'>
+          {fieldsList.map(({ fieldName, placeHolder, type, disabled }) =>
+            this.renderField(fieldName, placeHolder, type, disabled)
+          )}
+          <Button success type='submit'>
+            Submit
+          </Button>
+          <div className='logger'>
+            {/*Logger.getLogs().map(item => (
             <p>{item}</p>
           ))*/}
-        </div>
+          </div>
+          <Sprite style={{ margin: 5 }} sprite='octocat' />
+        </Container>
       </Form>
     );
   }

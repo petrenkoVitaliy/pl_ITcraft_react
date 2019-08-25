@@ -19,7 +19,7 @@ export class PlRequestsApiClass {
     this.basicUrl = 'https://pl.itcraft.co/api/client-v1';
   }
 
-  setUserData = data => {
+  setUserData = (data = {}) => {
     this.requestData = {
       ...this.requestData,
       'user-key': data.userKey,
@@ -36,7 +36,7 @@ export class PlRequestsApiClass {
 
     Logger.log(
       moduleName,
-      `found task from all sprints:  ${JSON.stringify(task)}`
+      `found task from all sprints:  ${task ? task.id : 'none'}`
     );
     return task;
   };
@@ -54,7 +54,7 @@ export class PlRequestsApiClass {
 
     this.sprintIds = this.__parseTaskDetails(res);
 
-    Logger.log(moduleName, `found sprints:  ${JSON.stringify(this.sprintIds)}`);
+    Logger.log(moduleName, `found sprints:  ${this.sprintIds.length}`);
     return this.sprintIds;
   };
 
@@ -77,7 +77,7 @@ export class PlRequestsApiClass {
 
     const task = this.__parseTaskDetails(res)[0];
 
-    Logger.log(moduleName, `created task:  ${JSON.stringify(task)}`);
+    Logger.log(moduleName, `created task:  ${task}`);
     return task;
   };
 
@@ -94,9 +94,10 @@ export class PlRequestsApiClass {
         },
         body: JSON.stringify(data)
       }).then(response => response.json());
+      const parsedList = this.__parseTaskDetails(res);
 
-      Logger.log(moduleName, `gotten tasks list:  ${JSON.stringify(res)}`);
-      return this.__parseTaskDetails(res);
+      Logger.log(moduleName, `gotten tasks list:  ${parsedList.length}`);
+      return parsedList;
     });
 
     const tasks = [];
@@ -111,7 +112,7 @@ export class PlRequestsApiClass {
     const sprints = await this.getSprints();
     const sprintIds = sprints.map(item => item.id);
 
-    Logger.log(moduleName, `gotten sprint ids:  ${JSON.stringify(sprintIds)}`);
+    Logger.log(moduleName, `gotten sprint ids:  ${sprintIds.length}`);
     return sprintIds;
   };
 

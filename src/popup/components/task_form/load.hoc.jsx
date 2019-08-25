@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
-import { ApiWrapper } from "../../../api";
+import { ApiWrapper } from '../../../api';
 
 const withLoad = Component => {
   return class extends React.Component {
-    state = { loadedData: "" };
+    state = { loadedData: '' };
 
     async componentDidMount() {
       const title = await ApiWrapper.jiraApi.getTaskTitle();
@@ -18,13 +18,9 @@ const withLoad = Component => {
 
     render() {
       return this.state.loadedData ? (
-        <Component
-          {...this.props}
-          loadedData={this.state.loadedData}
-          plRequestsApi={this.plRequestsApi}
-        />
+        <Component {...this.props} loadedData={this.state.loadedData} />
       ) : (
-        ""
+        ''
       );
     }
   };

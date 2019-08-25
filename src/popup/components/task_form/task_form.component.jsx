@@ -3,6 +3,9 @@ import { Form, Field, ErrorMessage } from 'formik';
 
 import withLoad from './load.hoc';
 import formHoc from './form.hoc';
+import './index.css';
+
+import { Container, Button } from 'nes-react';
 
 class TaskForm extends React.Component {
   renderField = props => (
@@ -51,10 +54,16 @@ class TaskForm extends React.Component {
     ];
 
     return (
-      <Form>
-        {fieldsList.map(item => this.renderField(item))}
-        <button type='submit'>Submit</button>
-      </Form>
+      <div className='task_form_wrapper'>
+        <Form>
+          <Container title='Create task form'>
+            {fieldsList.map(item => this.renderField(item))}
+            <Button primary type='submit'>
+              Submit
+            </Button>
+          </Container>
+        </Form>
+      </div>
     );
   }
 }

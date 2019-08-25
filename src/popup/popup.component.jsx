@@ -1,17 +1,18 @@
 import React from 'react';
+import { Container, Button } from 'nes-react';
 
 import { ApiWrapper } from '../api';
+
+import './index.css';
 
 import { SettingsComponent } from './components/settings';
 import { TaskDetailsComponent } from './components/task_details';
 import { TaskFormComponent } from './components/task_form';
 
-import './index.css';
-
 export class PopupComponent extends React.Component {
   tabsList = {
     details: <TaskDetailsComponent />,
-    form: <TaskFormComponent />,
+    create: <TaskFormComponent />,
     settings: <SettingsComponent />
   };
 
@@ -20,15 +21,8 @@ export class PopupComponent extends React.Component {
   };
 
   async componentDidMount() {
-    /* const userData = {
-      // userKey: '2622:6dX8Z3$_230M5B%aF0zM',
-      // managerKey: '2622:Mp4Mz*tzUq@*W4_4Q_3Q',
-      // projectId: '2097', //flex
-      // appKey: 'bc171976c01f30e8ce8bbe9cb0333942:jbjBAsLK3hkGwQE7QQ^Z' // const
-    };*/
     ApiWrapper.initializeApi();
     const savedUserData = await ApiWrapper.chromeApi.getData('settingsData');
-    console.log(savedUserData);
 
     ApiWrapper.plRequestsApi.setUserData(savedUserData.settingsData);
     this.setState({ selectedTab: 'details' });
@@ -42,13 +36,13 @@ export class PopupComponent extends React.Component {
 
     return (
       <div>
-        <div className='tabs'>
+        <Container dark>
           {Object.keys(this.tabsList).map(item => (
-            <button onClick={this.handleTabClick(item)} key={item}>
+            <Button onClick={this.handleTabClick(item)} key={item}>
               {item}
-            </button>
+            </Button>
           ))}
-        </div>
+        </Container>
         <div className='tab_wrapper'>
           {this.tabsList[selectedTab] ||
             `something has been broken, the world in a danger, 

@@ -2,8 +2,8 @@ import React from 'react';
 
 import { ApiWrapper } from '../../../api';
 import { LoaderComponent } from '../../../loader';
-
 import './index.css';
+import { Container, Button } from 'nes-react';
 
 export class TaskDetailsComponent extends React.Component {
   state = {
@@ -32,10 +32,10 @@ export class TaskDetailsComponent extends React.Component {
 
   renderTaskDetailsField = (label, value) =>
     value && (
-      <div>
+      <>
         <p className='title_label'>{`${label}:`}</p>
         <p className='input_label'>{value}</p>
-      </div>
+      </>
     );
 
   render() {
@@ -68,20 +68,24 @@ export class TaskDetailsComponent extends React.Component {
       }
     ];
 
-    return taskNumber ? (
-      <>
-        {fieldsList.map(({ label, value }) =>
-          this.renderTaskDetailsField(label, value)
+    return (
+      <Container title='Task Info'>
+        {taskNumber ? (
+          <>
+            {fieldsList.map(({ label, value }) =>
+              this.renderTaskDetailsField(label, value)
+            )}
+            <Button warning onClick={() => this.uploadTaskData(taskNumber)}>
+              Reload
+            </Button>
+          </>
+        ) : (
+          <>
+            <div>Cant find task number</div>
+            <LoaderComponent />
+          </>
         )}
-        <button type='button' onClick={() => this.uploadTaskData(taskNumber)}>
-          Reload
-        </button>
-      </>
-    ) : (
-      <>
-        <div>Cant find task number</div>
-        <LoaderComponent />
-      </>
+      </Container>
     );
   }
 }

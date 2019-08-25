@@ -8,16 +8,11 @@ const withLoad = Component => {
 
     async componentDidMount() {
       const settingsData = await ApiWrapper.plRequestsApi.getUserData();
-      console.log(settingsData);
       settingsData && this.setState({ loadedData: settingsData });
     }
 
     render() {
-      return this.state.loadedData ? (
-        <Component {...this.props} loadedData={this.state.loadedData} />
-      ) : (
-        ''
-      );
+      return <Component {...this.props} loadedData={this.state.loadedData} />;
     }
   };
 };

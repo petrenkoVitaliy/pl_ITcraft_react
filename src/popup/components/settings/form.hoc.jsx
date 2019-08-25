@@ -7,6 +7,8 @@ import { ApiWrapper } from '../../../api';
 const moduleName = 'SETTINGS_FORM_HOC';
 
 const formHoc = withFormik({
+  enableReinitialize: true,
+
   mapPropsToValues: props => ({
     userKey: props.loadedData['user-key'],
     managerKey: props.loadedData['manager-key'],
