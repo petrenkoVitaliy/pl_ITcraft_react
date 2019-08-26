@@ -6,6 +6,9 @@ Chrome extension to connect JiRa flex project with PL (simple **CR**~~UD~~)
 to install ext, clone repo & build app
 > npm run build
 
+or just download zip & unpcg it 
+> https://github.com/petrenkoVitaliy/pl_ITcraft_react/blob/master/chrome-ext-pl.zip
+
 then go to 
 > chrome://extensions/
 
