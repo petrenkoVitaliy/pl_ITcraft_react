@@ -15,7 +15,7 @@ const formHoc = withFormik({
     return {
       title: title || '',
       description: title || '',
-      time: 666, // it is necessary for api, but doesn't necessary for us, so... kek
+      time: 1, // it is necessary for api, but doesn't necessary for us
       sprint: lastSprintId // take last sprint id
     };
   },
