@@ -13,7 +13,7 @@ const formHoc = withFormik({
     userKey: props.loadedData['user-key'],
     managerKey: props.loadedData['manager-key'],
     projectId: props.loadedData['project-id'],
-    appKey: props.loadedData['user-key']
+    appKey: props.loadedData['app-key']
   }),
 
   validate: values =>
