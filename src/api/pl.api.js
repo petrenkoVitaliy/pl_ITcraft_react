@@ -8,12 +8,12 @@ export class PlRequestsApiClass {
       'user-key': userKey,
       'manager-key': managerKey,
       'app-key': 'bc171976c01f30e8ce8bbe9cb0333942:jbjBAsLK3hkGwQE7QQ^Z',
-      'project-id': '2097',
+      'project-id': '',
       'per-page': -1 // full data on one page,
       // 'parent-id': 205696
     };
 
-    this.sprints = [];
+    this.projectsList = [];
     this.tasksList = '';
     this.sprintIds = '';
     this.basicUrl = 'https://pl.itcraft.co/api/client-v1';
@@ -40,6 +40,8 @@ export class PlRequestsApiClass {
     );
     return task;
   };
+
+  getTaskFromAllProject = async (taskNumber = '') => {};
 
   getSprints = async () => {
     const data = { ...this.requestData, query: 'Sprint' };
@@ -79,6 +81,28 @@ export class PlRequestsApiClass {
 
     Logger.log(moduleName, `created task:  ${task}`);
     return task;
+  };
+
+  uploadAllProjects = async () => {
+    this.projectsList = await this.__uploadProjectsList();
+
+    return this.projectsList;
+  };
+
+  __uploadProjectsList = async () => {
+    const data = {
+      ...this.requestData
+    };
+
+    const res = await fetch(`${this.basicUrl}/projects/list`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(response => response.json());
+
+    return res;
   };
 
   __getTasksList = async sprintsIdsList => {

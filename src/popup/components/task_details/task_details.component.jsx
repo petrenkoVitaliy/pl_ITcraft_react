@@ -1,35 +1,11 @@
 import React from 'react';
-
-import { ApiWrapper } from '../../../api';
-import { LoaderComponent } from '../../../loader';
-import './index.css';
 import { Container, Button } from 'nes-react';
 
-export class TaskDetailsComponent extends React.Component {
-  state = {
-    taskNumber: '',
-    taskData: ''
-  };
+import withLoad from './load.hoc';
+import { LoaderComponent } from '../../../loader';
+import './index.css';
 
-  async componentDidMount() {
-    const taskNumber = await this.getTaskNumber();
-    await this.uploadTaskData(taskNumber);
-  }
-
-  getTaskNumber = async () => {
-    const taskNumber = await ApiWrapper.jiraApi.getTaskNumber();
-
-    this.setState({ taskNumber });
-    return taskNumber;
-  };
-
-  uploadTaskData = async taskNumber => {
-    const taskData = await ApiWrapper.plRequestsApi.getTaskDetailsFromAllSprints(
-      taskNumber
-    );
-    this.setState({ taskData });
-  };
-
+class TaskDetails extends React.Component {
   renderTaskDetailsField = (label, value) =>
     value && (
       <>
@@ -39,7 +15,7 @@ export class TaskDetailsComponent extends React.Component {
     );
 
   render() {
-    const { taskNumber = '', taskData = {} } = this.state;
+    const { taskNumber = '', taskData = {} } = this.props.loadedData;
 
     const fieldsList = [
       {
@@ -89,3 +65,5 @@ export class TaskDetailsComponent extends React.Component {
     );
   }
 }
+
+export const TaskDetailsComponent = withLoad(TaskDetails);

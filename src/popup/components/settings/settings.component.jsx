@@ -8,7 +8,8 @@ import { Container, Button, Sprite } from 'nes-react';
 
 export class Settings extends React.Component {
   renderField = (fieldName, placeHolder, type = 'text', disabled = false) => (
-    <div>
+    <div key={fieldName}>
+      <label>{fieldName}</label>
       <Field
         type={type}
         placeholder={placeHolder}
@@ -29,11 +30,6 @@ export class Settings extends React.Component {
       {
         fieldName: 'managerKey',
         placeHolder: 'managerKey'
-      },
-      {
-        fieldName: 'projectId',
-        placeHolder: 'projectId',
-        disabled: true
       },
       {
         fieldName: 'appKey',

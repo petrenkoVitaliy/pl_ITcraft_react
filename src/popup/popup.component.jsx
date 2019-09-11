@@ -22,9 +22,11 @@ export class PopupComponent extends React.Component {
 
   async componentDidMount() {
     ApiWrapper.initializeApi();
-    const savedUserData = await ApiWrapper.chromeApi.getData('settingsData');
 
+    const savedUserData = await ApiWrapper.chromeApi.getData('settingsData');
+    await ApiWrapper.plRequestsApi.uploadAllProjects();
     ApiWrapper.plRequestsApi.setUserData(savedUserData.settingsData);
+
     this.setState({ selectedTab: 'details' });
   }
 
