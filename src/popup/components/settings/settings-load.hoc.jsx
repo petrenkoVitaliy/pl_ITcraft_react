@@ -8,7 +8,6 @@ const withLoad = Component => {
     async componentDidMount() {
       const settingsData = await ApiWrapper.plRequestsApi.getUserData();
       settingsData && this.setState({ settingsData });
-      console.log(settingsData.projectsList);
     }
 
     render() {

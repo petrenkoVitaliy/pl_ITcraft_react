@@ -3,23 +3,58 @@ import { ApiWrapper } from '../../../api';
 
 const withLoad = Component => {
   return class extends React.Component {
-    state = { loadedData: '' };
+    state = {
+      title: '',
+      sprintsList: [],
+      lastSprintId: '',
+      projects: [],
+      projectId: ''
+    };
 
     async componentDidMount() {
       const title = await ApiWrapper.jiraApi.getTaskTitle();
       const taskNumber = await ApiWrapper.jiraApi.getTaskNumber();
-      const sprintsList = await ApiWrapper.plRequestsApi.getSprints(taskNumber);
+      const projects = ApiWrapper.plRequestsApi.getProjectsByTitle(taskNumber);
+
+      const project = projects[0];
+      const projectId = project ? project.id : '';
+
+      const sprintsList = await ApiWrapper.plRequestsApi.getSprints(projectId);
+
+      const lastSprint = sprintsList[sprintsList.length - 1];
+      const lastSprintId = lastSprint ? lastSprint.id : '';
 
       this.setState({
-        loadedData: { title: `${taskNumber} ${title}`, sprintsList }
+        title: `${taskNumber} ${title || ''}`,
+        sprintsList,
+        lastSprintId,
+        projects,
+        projectId
       });
     }
 
+    updateSprintList = async projectId => {
+      console.log(projectId);
+
+      const sprintsList = await ApiWrapper.plRequestsApi.getSprints(projectId);
+
+      const lastSprint = sprintsList[sprintsList.length - 1];
+      const lastSprintId = lastSprint ? lastSprint.id : '';
+
+      this.setState({
+        sprintsList,
+        lastSprintId,
+        projectId
+      });
+    };
+
     render() {
-      return this.state.loadedData ? (
-        <Component {...this.props} loadedData={this.state.loadedData} />
-      ) : (
-        ''
+      return (
+        <Component
+          {...this.props}
+          loadedData={this.state}
+          updateSprintList={this.updateSprintList}
+        />
       );
     }
   };

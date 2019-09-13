@@ -15,6 +15,13 @@ class TaskForm extends React.Component {
         placeholder={props.placeholder || 'please input data'}
         name={props.name}
         children={props.renderChildrenFn && props.renderChildrenFn()}
+        onChange={
+          props.onChange &&
+          (e => {
+            props.onChange(e.target.value);
+            this.props.setFieldValue(props.name, e.target.value);
+          })
+        }
       />
       <ErrorMessage name={props.name} component='div' />
     </div>
@@ -22,10 +29,18 @@ class TaskForm extends React.Component {
 
   render() {
     const {
-      loadedData: { sprintsList }
+      loadedData: { sprintsList, projects },
+      updateSprintList
     } = this.props;
 
     const fieldsList = [
+      {
+        component: 'select',
+        name: 'project',
+        renderChildrenFn: () =>
+          projects.map(item => <option value={item.id}>{item.name}</option>),
+        onChange: updateSprintList
+      },
       {
         placeholder: 'Title',
         name: 'title'

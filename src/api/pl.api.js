@@ -25,15 +25,19 @@ export class PlRequestsApiClass {
       'user-key': data.userKey,
       'manager-key': data.managerKey
     };
-    console.log(data);
     this.projectsList = data.projectsMap ? data.projectsMap : this.projectsList;
-    console.log(this.projectsList);
   };
 
   getUserData = () => ({
     ...this.requestData,
     projectsList: this.projectsList
   });
+
+  getProjectsByTitle = (taskNumber = '') => {
+    const projects =
+      this.projectsList.filter(({ code }) => taskNumber.includes(code)) || {};
+    return projects;
+  };
 
   getTaskDetails = async taskNumber => {
     const projectId = this.__getProjectIdFromNumber(taskNumber);
@@ -57,15 +61,20 @@ export class PlRequestsApiClass {
 
   getTaskFromAllProject = async (taskNumber = '') => {};
 
-  getSprints = async taskNumber => {
-    const projectId = this.__getProjectIdFromNumber(taskNumber);
+  getSprints = async projectId => {
     this.sprintIds = await this.__getSprints(projectId);
 
     return this.sprintIds;
   };
 
-  createTask = async ({ description, time, title, sprint }) => {
-    const task = await this.__createTask(description, time, title, sprint);
+  createTask = async ({ description, time, title, sprint, project }) => {
+    const task = await this.__createTask(
+      description,
+      time,
+      title,
+      sprint,
+      project
+    );
 
     return task;
   };
@@ -87,7 +96,6 @@ export class PlRequestsApiClass {
   __getSprints = async projectId => {
     const data = {
       ...this.requestData,
-      query: 'Sprint',
       'project-id': projectId
     };
 
@@ -99,22 +107,23 @@ export class PlRequestsApiClass {
       body: JSON.stringify(data)
     }).then(response => response.json());
 
-    const sprintIds = this.__parseTaskDetails(res);
+    const taskIds = this.__parseTaskDetails(res);
+    console.log(taskIds[0].hc);
+    const sprintIds = taskIds.filter(({ hc }) => hc === '1'); // has children
+    console.log(taskIds);
 
     Logger.log(moduleName, `found sprints:  ${sprintIds.length}`);
     return sprintIds;
   };
 
-  __createTask = async (description, time, title, sprint) => {
-    const projectId = this.__getProjectIdFromNumber(title);
-
+  __createTask = async (description, time, title, sprint, project) => {
     const data = {
       ...this.requestData,
       description: description,
       effort: time,
       title: title,
       'parent-id': sprint,
-      'project-id': projectId
+      'project-id': project
     };
 
     const res = await fetch(`${this.basicUrl}/tasks/add`, {
@@ -215,7 +224,6 @@ export class PlRequestsApiClass {
   };
 
   __getProjectIdFromNumber = (taskNumber = '') => {
-    console.log(this.projectsList);
     const currentProject =
       this.projectsList.find(({ code }) => taskNumber.includes(code)) || {};
 
