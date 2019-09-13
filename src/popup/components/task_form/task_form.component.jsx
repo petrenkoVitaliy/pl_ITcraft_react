@@ -1,22 +1,22 @@
-import React from "react";
-import { Form, Field, ErrorMessage } from "formik";
-import withLoad from "./task_form-load.hoc";
-import formHoc from "./task_form-form.hoc";
-import "./index.css";
-import { Container, Button } from "nes-react";
+import React from 'react';
+import { Form, Field, ErrorMessage } from 'formik';
+import withLoad from './task_form-load.hoc';
+import formHoc from './task_form-form.hoc';
+import './index.css';
+import { Container, Button } from 'nes-react';
 
 class TaskForm extends React.Component {
   renderField = props => (
     <div key={props.name}>
       <Field
         {...props}
-        type={props.type || "text"}
-        component={props.component || "input"}
-        placeholder={props.placeholder || "please input data"}
+        type={props.type || 'text'}
+        component={props.component || 'input'}
+        placeholder={props.placeholder || 'please input data'}
         name={props.name}
-        children={props.renderChildrenFn ? props.renderChildrenFn() : ""}
+        children={props.renderChildrenFn && props.renderChildrenFn()}
       />
-      <ErrorMessage name={props.name} component="div" />
+      <ErrorMessage name={props.name} component='div' />
     </div>
   );
 
@@ -27,36 +27,36 @@ class TaskForm extends React.Component {
 
     const fieldsList = [
       {
-        placeholder: "Title",
-        name: "title"
+        placeholder: 'Title',
+        name: 'title'
       },
       {
-        placeholder: "Description",
-        name: "description",
-        component: "textarea",
+        placeholder: 'Description',
+        name: 'description',
+        component: 'textarea',
 
-        rows: "4",
-        cols: "40"
+        rows: '4',
+        cols: '40'
       },
       {
-        placeholder: "Estimated time (minutes)",
-        name: "time",
-        type: "number"
+        placeholder: 'Estimated time (minutes)',
+        name: 'time',
+        type: 'number'
       },
       {
-        component: "select",
-        name: "sprint",
+        component: 'select',
+        name: 'sprint',
         renderChildrenFn: () =>
           sprintsList.map(item => <option value={item.id}>{item.title}</option>)
       }
     ];
 
     return (
-      <div className="task_form_wrapper">
+      <div className='task_form_wrapper'>
         <Form>
-          <Container title="Create task form">
+          <Container title='Create task form'>
             {fieldsList.map(item => this.renderField(item))}
-            <Button primary type="submit">
+            <Button primary type='submit'>
               Submit
             </Button>
           </Container>

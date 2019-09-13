@@ -1,5 +1,5 @@
-import React from "react";
-import { ApiWrapper } from "../../../api";
+import React from 'react';
+import { ApiWrapper } from '../../../api';
 
 const withLoad = Component => {
   return class extends React.Component {
@@ -8,6 +8,7 @@ const withLoad = Component => {
     async componentDidMount() {
       const settingsData = await ApiWrapper.plRequestsApi.getUserData();
       settingsData && this.setState({ settingsData });
+      console.log(settingsData.projectsList);
     }
 
     render() {

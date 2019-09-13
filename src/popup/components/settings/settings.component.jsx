@@ -1,15 +1,15 @@
-import React from "react";
-import { Form, Field, ErrorMessage } from "formik";
-import { Container, Button, Sprite } from "nes-react";
+import React from 'react';
+import { Form, Field, ErrorMessage } from 'formik';
+import { Container, Button, Sprite } from 'nes-react';
 
-import formHoc from "./settings-form.hoc";
-import withLoad from "./settings-load.hoc";
+import formHoc from './settings-form.hoc';
+import withLoad from './settings-load.hoc';
 
 export class Settings extends React.Component {
   renderField = (
     fieldName,
     placeHolder,
-    type = "text",
+    type = 'text',
     disabled = false,
     label
   ) => (
@@ -22,38 +22,37 @@ export class Settings extends React.Component {
         disabled={disabled}
         label={placeHolder}
       />
-      <ErrorMessage name={fieldName} component="div" />
+      <ErrorMessage name={fieldName} component='div' />
     </div>
   );
 
   render() {
     const fieldsList = [
       {
-        fieldName: "userKey",
-        label: "userKey",
-        placeHolder: "userKey"
+        fieldName: 'userKey',
+        label: 'userKey',
+        placeHolder: 'userKey'
       },
       {
-        fieldName: "managerKey",
-        label: "managerKey",
-        placeHolder: "managerKey"
+        fieldName: 'managerKey',
+        label: 'managerKey',
+        placeHolder: 'managerKey'
       },
       {
-        fieldName: "appKey",
-        label: "appKey",
-        placeHolder: "appKey",
+        fieldName: 'appKey',
+        label: 'appKey',
+        placeHolder: 'appKey',
         disabled: true
       },
       ...this.props.values.projectsMap
         .map((item, index) => [
           {
-            label: "projectKey",
             fieldName: `projectsMap.${index}.name`,
             disabled: true
           },
           {
             fieldName: `projectsMap.${index}.code`,
-            placeHolder: "project"
+            placeHolder: 'projectKey'
           }
         ])
         .flat(1)
@@ -61,19 +60,19 @@ export class Settings extends React.Component {
 
     return (
       <Form>
-        <Container title="Settings form">
+        <Container title='Settings form'>
           {fieldsList.map(({ fieldName, placeHolder, type, disabled, label }) =>
             this.renderField(fieldName, placeHolder, type, disabled, label)
           )}
-          <Button success type="submit">
+          <Button success type='submit'>
             Submit
           </Button>
-          <div className="logger">
+          <div className='logger'>
             {/*Logger.getLogs().map(item => (
             <p>{item}</p>
           ))*/}
           </div>
-          <Sprite style={{ margin: 5 }} sprite="octocat" />
+          <Sprite style={{ margin: 5 }} sprite='octocat' />
         </Container>
       </Form>
     );
