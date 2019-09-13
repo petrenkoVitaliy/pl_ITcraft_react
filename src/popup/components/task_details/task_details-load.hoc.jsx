@@ -1,18 +1,17 @@
-import React from 'react';
+import React from "react";
 
-import { ApiWrapper } from '../../../api';
+import { ApiWrapper } from "../../../api";
 
 const withLoad = Component => {
   return class extends React.Component {
     state = {
-      taskNumber: '',
-      taskData: ''
+      taskNumber: "",
+      taskData: ""
     };
 
     async componentDidMount() {
-      //const taskNumber = await this.getTaskNumber();
-      // await this.uploadTaskData(taskNumber);
-      await this.getTaskNumber();
+      const taskNumber = await this.getTaskNumber();
+      await this.uploadTaskData(taskNumber);
     }
 
     uploadTaskData = async taskNumber => {
@@ -30,7 +29,15 @@ const withLoad = Component => {
     };
 
     render() {
-      return <Component {...this.props} loadedData={this.state.loadedData} />;
+      const { taskNumber, taskData } = this.state;
+
+      return (
+        <Component
+          {...this.props}
+          taskNumber={taskNumber}
+          taskData={taskData}
+        />
+      );
     }
   };
 };

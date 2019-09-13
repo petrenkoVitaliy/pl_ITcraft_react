@@ -1,78 +1,115 @@
-import { Logger } from 'helpers';
+import { Logger } from "helpers";
 
-const moduleName = 'PL_API';
+const moduleName = "PL_API";
 
 export class PlRequestsApiClass {
   constructor({ userKey, managerKey } = {}) {
     this.requestData = {
-      'user-key': userKey,
-      'manager-key': managerKey,
-      'app-key': 'bc171976c01f30e8ce8bbe9cb0333942:jbjBAsLK3hkGwQE7QQ^Z',
-      'project-id': '',
-      'per-page': -1 // full data on one page,
+      "user-key": userKey,
+      "manager-key": managerKey,
+      "app-key": "bc171976c01f30e8ce8bbe9cb0333942:jbjBAsLK3hkGwQE7QQ^Z",
+      "project-id": "",
+      "per-page": -1 // full data on one page,
       // 'parent-id': 205696
     };
 
-    this.projectsList = [];
-    this.tasksList = '';
-    this.sprintIds = '';
-    this.basicUrl = 'https://pl.itcraft.co/api/client-v1';
+    this.projectsList = [
+      { name: "pr1", id: 123, code: "FLEX" },
+      { name: "pr2", id: 23, code: "APEX" }
+    ];
+    this.tasksList = "";
+    this.sprintIds = "";
+    this.basicUrl = "https://pl.itcraft.co/api/client-v1";
   }
 
   setUserData = (data = {}) => {
     this.requestData = {
       ...this.requestData,
-      'user-key': data.userKey,
-      'manager-key': data.managerKey
+      "user-key": data.userKey,
+      "manager-key": data.managerKey
     };
+
+    this.projectsList = data.projectsMap ? data.projectsMap : this.projectsList;
   };
 
-  getUserData = () => this.requestData;
+  getUserData = () => ({
+    ...this.requestData,
+    projectsList: this.projectsList
+  });
 
-  getTaskDetailsFromAllSprints = async (taskNumber = '') => {
+  getTaskDetails = async taskNumber => {
+    const projectId = this.__getProjectIdFromNumber(taskNumber);
+    const details = await this.__getTaskDetails(taskNumber, projectId);
+    return details;
+  };
+
+  getTaskDetailsFromAllSprints = async (taskNumber = "") => {
     this.sprintIds = await this.__getSprintsIdsList();
     this.tasksList = await this.__getTasksList(this.sprintIds);
     const task = this.tasksList.find(item => item.title.includes(taskNumber));
 
     Logger.log(
       moduleName,
-      `found task from all sprints:  ${task ? task.id : 'none'}`
+      `found task from all sprints:  ${task ? task.id : "none"}`
     );
     return task;
   };
 
-  getTaskFromAllProject = async (taskNumber = '') => {};
+  getTaskFromAllProject = async (taskNumber = "") => {};
 
   getSprints = async () => {
-    const data = { ...this.requestData, query: 'Sprint' };
+    this.sprintIds = await this.__getSprints();
 
-    const res = await fetch(`${this.basicUrl}/tasks/list`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    }).then(response => response.json());
-
-    this.sprintIds = this.__parseTaskDetails(res);
-
-    Logger.log(moduleName, `found sprints:  ${this.sprintIds.length}`);
     return this.sprintIds;
   };
 
   createTask = async ({ description, time, title, sprint }) => {
+    const task = await this.__createTask(description, time, title, sprint);
+
+    return task;
+  };
+
+  uploadAllProjects = async () => {
+    this.projectsList = await this.__uploadProjectsList();
+
+    return this.projectsList;
+  };
+
+  //--> requests:
+
+  __getSprints = async () => {
+    const data = { ...this.requestData, query: "Sprint" };
+
+    const res = await fetch(`${this.basicUrl}/tasks/list`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    }).then(response => response.json());
+
+    const sprintIds = this.__parseTaskDetails(res);
+
+    Logger.log(moduleName, `found sprints:  ${sprintIds.length}`);
+    return sprintIds;
+  };
+
+  __createTask = async (description, time, title, sprint) => {
+    const projectId = this.__getProjectIdFromNumber(title);
+
     const data = {
       ...this.requestData,
       description: description,
       effort: time,
       title: title,
-      'parent-id': sprint
+      "parent-id": sprint,
+      "project-id": projectId
     };
 
     const res = await fetch(`${this.basicUrl}/tasks/add`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
     }).then(response => response.json());
@@ -83,21 +120,15 @@ export class PlRequestsApiClass {
     return task;
   };
 
-  uploadAllProjects = async () => {
-    this.projectsList = await this.__uploadProjectsList();
-
-    return this.projectsList;
-  };
-
   __uploadProjectsList = async () => {
     const data = {
       ...this.requestData
     };
 
     const res = await fetch(`${this.basicUrl}/projects/list`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
     }).then(response => response.json());
@@ -109,12 +140,12 @@ export class PlRequestsApiClass {
     const data = { ...this.requestData };
 
     const queries = sprintsIdsList.map(async item => {
-      data['parent-id'] = item; // to find task inside this sprint
+      data["parent-id"] = item; // to find task inside this sprint
 
       const res = await fetch(`${this.basicUrl}/tasks/list`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
       }).then(response => response.json());
@@ -147,20 +178,29 @@ export class PlRequestsApiClass {
     return data.tasks.data;
   };
 
-  // unused method
-  // gets task details by query
-  __getTaskDetails = async taskNumber => {
-    const data = { ...this.requestData, query: taskNumber };
+  __getTaskDetails = async (taskNumber, projectId) => {
+    const data = {
+      ...this.requestData,
+      query: taskNumber,
+      "project-id": projectId
+    };
 
     const res = await fetch(`${this.basicUrl}/tasks/list`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
     });
 
     const task = this.__parseTaskDetails(res)[0];
     return task;
+  };
+
+  __getProjectIdFromNumber = async taskNumber => {
+    const currentProject =
+      this.projectsList.find(({ code }) => taskNumber.includes(code)) || {};
+
+    return currentProject.id;
   };
 }
