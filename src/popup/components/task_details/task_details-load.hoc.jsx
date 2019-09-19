@@ -6,7 +6,7 @@ const withLoad = Component => {
   return class extends React.Component {
     state = {
       taskNumber: '',
-      taskData: ''
+      taskData: []
     };
 
     async componentDidMount() {
@@ -22,7 +22,14 @@ const withLoad = Component => {
       const taskData = await ApiWrapper.plRequestsApi.getTaskDetails(
         taskNumber
       );
-      this.setState({ taskData });
+
+      const formattedTaskData = taskData.map(task => ({
+        ...task,
+        'time-taken': `${(task['time-taken'] / 60).toFixed(1)} hours`,
+        'time-approved': `${(task['time-approved'] / 60).toFixed(1)} hours`,
+        'time-effort': `${(task['time-effort'] / 60).toFixed(1)} hours`
+      }));
+      this.setState({ taskData: formattedTaskData });
     };
 
     getTaskNumber = async () => {

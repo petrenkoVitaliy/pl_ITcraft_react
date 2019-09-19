@@ -79,6 +79,18 @@ export class PlRequestsApiClass {
     return task;
   };
 
+  postTime = async ({ description, taken, date, taskId, projectId }) => {
+    const res = await this.__postTime(
+      description,
+      taken,
+      date,
+      taskId,
+      projectId
+    );
+
+    return res;
+  };
+
   uploadAllProjects = async () => {
     const projects = await this.__uploadProjectsList();
 
@@ -108,9 +120,7 @@ export class PlRequestsApiClass {
     }).then(response => response.json());
 
     const taskIds = this.__parseTaskDetails(res);
-    console.log(taskIds[0].hc);
     const sprintIds = taskIds.filter(({ hc }) => hc === '1'); // has children
-    console.log(taskIds);
 
     Logger.log(moduleName, `found sprints:  ${sprintIds.length}`);
     return sprintIds;
@@ -119,7 +129,7 @@ export class PlRequestsApiClass {
   __createTask = async (description, time, title, sprint, project) => {
     const data = {
       ...this.requestData,
-      description: description,
+      description,
       effort: time,
       title: title,
       'parent-id': sprint,
@@ -140,6 +150,28 @@ export class PlRequestsApiClass {
     return task;
   };
 
+  __postTime = async (description, taken, date, taskId, projectId) => {
+    const data = {
+      ...this.requestData,
+      description,
+      'task-id': taskId,
+      'project-id': projectId,
+      taken,
+      date
+    };
+
+    const res = await fetch(`${this.basicUrl}/posts/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(response => response.json());
+
+    Logger.log(moduleName, `posted time:  ${res}`);
+    return res;
+  };
+
   __uploadProjectsList = async () => {
     const data = {
       ...this.requestData
@@ -156,7 +188,7 @@ export class PlRequestsApiClass {
     const parsedData =
       res &&
       res.projects &&
-      res.projects.map(({ id, name }) => ({ id, name, code: '' }));
+      res.projects.map(({ id, name }) => ({ id, name, code: '`none`' }));
 
     return parsedData || [];
   };
@@ -219,7 +251,7 @@ export class PlRequestsApiClass {
       body: JSON.stringify(data)
     }).then(response => response.json());
 
-    const task = this.__parseTaskDetails(res)[0];
+    const task = this.__parseTaskDetails(res);
     return task;
   };
 

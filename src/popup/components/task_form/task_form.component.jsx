@@ -15,13 +15,10 @@ class TaskForm extends React.Component {
         placeholder={props.placeholder || 'please input data'}
         name={props.name}
         children={props.renderChildrenFn && props.renderChildrenFn()}
-        onChange={
-          props.onChange &&
-          (e => {
-            props.onChange(e.target.value);
-            this.props.setFieldValue(props.name, e.target.value);
-          })
-        }
+        onChange={e => {
+          props.onChange && props.onChange(e.target.value);
+          this.props.setFieldValue(props.name, e.target.value);
+        }}
       />
       <ErrorMessage name={props.name} component='div' />
     </div>

@@ -8,12 +8,11 @@ const formHoc = withFormik({
   enableReinitialize: true,
 
   mapPropsToValues: ({ loadedData: { title, lastSprintId, projectId } }) => {
-    console.log(title, lastSprintId, projectId);
     return {
       project: projectId,
       title: title || '',
       description: title || '',
-      time: 1, // it is necessary for api, but doesn't necessary for us
+      time: 1, // it is necessary for api, but doesn't necessary for us 😃
       sprint: lastSprintId // take last sprint id
     };
   },

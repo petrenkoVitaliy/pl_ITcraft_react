@@ -34,8 +34,6 @@ const withLoad = Component => {
     }
 
     updateSprintList = async projectId => {
-      console.log(projectId);
-
       const sprintsList = await ApiWrapper.plRequestsApi.getSprints(projectId);
 
       const lastSprint = sprintsList[sprintsList.length - 1];

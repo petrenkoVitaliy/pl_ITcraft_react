@@ -3,7 +3,6 @@ class LoggerClass {
 
   log = (receiver, msg) => {
     const logItem = `${receiver}: ${msg}`;
-    console.log(logItem);
     this.logs.push(logItem);
   };
 
