@@ -4,7 +4,7 @@ import { Container, Button, Sprite } from 'nes-react';
 
 import formHoc from './settings-form.hoc';
 import withLoad from './settings-load.hoc';
-
+import './index.css';
 export class Settings extends React.Component {
   renderField = (
     fieldName,
@@ -13,7 +13,7 @@ export class Settings extends React.Component {
     disabled = false,
     label
   ) => (
-    <div key={fieldName}>
+    <div key={fieldName} className='field_wrap'>
       <label>{label}</label>
       <Field
         type={type}

@@ -35,12 +35,15 @@ export class PlRequestsApiClass {
 
   getProjectsByTitle = (taskNumber = '') => {
     const projects =
-      this.projectsList.filter(({ code }) => taskNumber.includes(code)) || {};
+      this.projectsList.filter(
+        ({ code }) => taskNumber.includes(code) && code
+      ) || {};
     return projects;
   };
 
-  getTaskDetails = async taskNumber => {
-    const projectId = this.__getProjectIdFromNumber(taskNumber);
+  getTaskDetails = async (taskNumber, selectedProjectId) => {
+    const projectId =
+      selectedProjectId || this.__getProjectIdFromNumber(taskNumber);
     const details = await this.__getTaskDetails(taskNumber, projectId);
 
     return details;
@@ -257,7 +260,8 @@ export class PlRequestsApiClass {
 
   __getProjectIdFromNumber = (taskNumber = '') => {
     const currentProject =
-      this.projectsList.find(({ code }) => taskNumber.includes(code)) || {};
+      this.projectsList.find(({ code }) => taskNumber.includes(code) && code) ||
+      {};
 
     return currentProject.id;
   };

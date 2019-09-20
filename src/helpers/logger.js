@@ -4,6 +4,7 @@ class LoggerClass {
   log = (receiver, msg) => {
     const logItem = `${receiver}: ${msg}`;
     this.logs.push(logItem);
+    console.log(logItem);
   };
 
   getLogs = (lastLinesCount = this.logs.length) => {

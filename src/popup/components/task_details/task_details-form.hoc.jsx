@@ -14,7 +14,7 @@ const formHoc = withFormik({
     taken: '',
     date: moment(),
     taskId: '',
-    projectId: props.taskData[0] && props.taskData[0]['project-id']
+    projectId: props.projectId
   }),
 
   validate: values =>
@@ -28,7 +28,7 @@ const formHoc = withFormik({
 
   handleSubmit: async (values, { setSubmitting }) => {
     Logger.log(moduleName, `submitted data  ${JSON.stringify(values)}`);
-
+    console.log('kk');
     const formattedValues = {
       ...values,
       taken: (values.taken * 60).toFixed(0),

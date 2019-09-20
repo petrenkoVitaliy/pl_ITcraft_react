@@ -8,6 +8,7 @@ import { Container, Button } from 'nes-react';
 class TaskForm extends React.Component {
   renderField = props => (
     <div key={props.name}>
+      <label>{props.placeholder}</label>
       <Field
         {...props}
         type={props.type || 'text'}
@@ -32,6 +33,7 @@ class TaskForm extends React.Component {
 
     const fieldsList = [
       {
+        placeholder: 'Project',
         component: 'select',
         name: 'project',
         renderChildrenFn: () =>
@@ -56,6 +58,7 @@ class TaskForm extends React.Component {
         type: 'number'
       },
       {
+        placeholder: 'Parent task (sprint)',
         component: 'select',
         name: 'sprint',
         renderChildrenFn: () =>

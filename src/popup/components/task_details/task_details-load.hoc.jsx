@@ -6,20 +6,26 @@ const withLoad = Component => {
   return class extends React.Component {
     state = {
       taskNumber: '',
-      taskData: []
+      taskData: [],
+      projectsList: [],
+      projectId: ''
     };
 
     async componentDidMount() {
       await this.uploadPage();
     }
 
-    uploadPage = async () => {
+    uploadPage = async projectId => {
       const taskNumber = await this.getTaskNumber();
-      await this.uploadTaskData(taskNumber);
+      await this.uploadTaskData(taskNumber, projectId);
     };
 
-    uploadTaskData = async taskNumber => {
+    uploadTaskData = async (taskNumber, projectId) => {
       const taskData = await ApiWrapper.plRequestsApi.getTaskDetails(
+        taskNumber,
+        projectId
+      );
+      const projectsList = ApiWrapper.plRequestsApi.getProjectsByTitle(
         taskNumber
       );
 
@@ -29,7 +35,12 @@ const withLoad = Component => {
         'time-approved': `${(task['time-approved'] / 60).toFixed(1)} hours`,
         'time-effort': `${(task['time-effort'] / 60).toFixed(1)} hours`
       }));
-      this.setState({ taskData: formattedTaskData });
+      const firstTask = taskData[0];
+      this.setState({
+        taskData: formattedTaskData,
+        projectsList,
+        projectId: projectId || (firstTask && firstTask['project-id'])
+      });
     };
 
     getTaskNumber = async () => {
@@ -39,15 +50,22 @@ const withLoad = Component => {
       return taskNumber;
     };
 
+    changeProjectId = async projectId => {
+      await this.uploadPage(projectId);
+    };
+
     render() {
-      const { taskNumber, taskData } = this.state;
+      const { taskNumber, taskData, projectsList, projectId } = this.state;
 
       return (
         <Component
           {...this.props}
           taskNumber={taskNumber}
           taskData={taskData}
+          projectId={projectId}
+          projectsList={projectsList}
           uploadPage={this.uploadPage}
+          changeProjectId={this.changeProjectId}
         />
       );
     }
