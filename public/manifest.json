@@ -2,8 +2,8 @@
   "manifest_version": 2,
   "name": "Pl ITechCraft extension",
   "author": "vitt",
-  "version": "0.1.0",
-  "description": "!Chrome extension to manage pl api with jira(flexwisehealth)",
+  "version": "0.2.1",
+  "description": "",
   "icons": {
     "16": "icon.png",
     "48": "icon.png",
