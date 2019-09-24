@@ -1,13 +1,13 @@
-import React from 'react';
-import { Container, Button } from 'nes-react';
+import React from "react";
+import Button from "@material-ui/core/Button";
 
-import { ApiWrapper } from '../api';
+import { ApiWrapper } from "../api";
 
-import './index.css';
+import "./index.css";
 
-import { SettingsComponent } from './components/settings';
-import { TaskDetailsComponent } from './components/task_details';
-import { TaskFormComponent } from './components/task_form';
+import { SettingsComponent } from "./components/settings";
+import { TaskDetailsComponent } from "./components/task_details";
+import { TaskFormComponent } from "./components/task_form";
 
 export class PopupComponent extends React.Component {
   tabsList = {
@@ -17,17 +17,17 @@ export class PopupComponent extends React.Component {
   };
 
   state = {
-    selectedTab: ''
+    selectedTab: ""
   };
 
   async componentDidMount() {
     ApiWrapper.initializeApi();
 
-    const savedUserData = await ApiWrapper.chromeApi.getData('settingsData');
+    const savedUserData = await ApiWrapper.chromeApi.getData("settingsData");
     ApiWrapper.plRequestsApi.setUserData(savedUserData.settingsData);
     await ApiWrapper.plRequestsApi.uploadAllProjects();
 
-    this.setState({ selectedTab: 'details' });
+    this.setState({ selectedTab: "details" });
   }
 
   handleTabClick = tabKey => () =>
@@ -38,14 +38,19 @@ export class PopupComponent extends React.Component {
 
     return (
       <div>
-        <Container dark>
+        <div className="menuWrapper">
           {Object.keys(this.tabsList).map(item => (
-            <Button onClick={this.handleTabClick(item)} key={item}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleTabClick(item)}
+              key={item}
+            >
               {item}
             </Button>
           ))}
-        </Container>
-        <div className='tab_wrapper'>
+        </div>
+        <div className="tab_wrapper">
           {this.tabsList[selectedTab] ||
             `something has been broken, the world in a danger, 
           run away...`}

@@ -1,29 +1,58 @@
-import React from 'react';
-import { Form, Field, ErrorMessage } from 'formik';
-import withLoad from './task_form-load.hoc';
-import formHoc from './task_form-form.hoc';
-import './index.css';
-import { Container, Button } from 'nes-react';
+import React from "react";
+import { Form } from "formik";
+import Button from "@material-ui/core/Button";
+import MenuItem from "@material-ui/core/MenuItem";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import Select from "@material-ui/core/Select";
+import InputLabel from "@material-ui/core/InputLabel";
+
+import withLoad from "./task_form-load.hoc";
+import formHoc from "./task_form-form.hoc";
+import "./index.css";
 
 class TaskForm extends React.Component {
-  renderField = props => (
-    <div key={props.name}>
-      <label>{props.placeholder}</label>
-      <Field
-        {...props}
-        type={props.type || 'text'}
-        component={props.component || 'input'}
-        placeholder={props.placeholder || 'please input data'}
-        name={props.name}
-        children={props.renderChildrenFn && props.renderChildrenFn()}
-        onChange={e => {
-          props.onChange && props.onChange(e.target.value);
-          this.props.setFieldValue(props.name, e.target.value);
-        }}
-      />
-      <ErrorMessage name={props.name} component='div' />
-    </div>
-  );
+  renderField = ({
+    type = "text",
+    name,
+    placeholder,
+    renderOptions,
+    onChange
+  }) => {
+    const { touched, errors } = this.props;
+
+    const componentProps = {
+      name,
+      id: name,
+      label: placeholder,
+      error: !!errors[name] && touched[name],
+      fullWidth: true,
+      onChange: e => {
+        onChange && onChange(e.target.value);
+        this.props.setFieldValue(name, e.target.value);
+      }
+    };
+
+    return (
+      <div key={name}>
+        {renderOptions ? (
+          <>
+            <InputLabel shrink>{placeholder}</InputLabel>
+            <Select
+              {...componentProps}
+              children={renderOptions && renderOptions()}
+            />
+          </>
+        ) : (
+          <TextField
+            {...componentProps}
+            type={type}
+            helperText={touched[name] ? errors[name] : ""}
+          />
+        )}
+      </div>
+    );
+  };
 
   render() {
     const {
@@ -33,48 +62,49 @@ class TaskForm extends React.Component {
 
     const fieldsList = [
       {
-        placeholder: 'Project',
-        component: 'select',
-        name: 'project',
-        renderChildrenFn: () =>
-          projects.map(item => <option value={item.id}>{item.name}</option>),
+        placeholder: "project",
+        name: "project",
+        renderOptions: () =>
+          projects.map(item => (
+            <MenuItem value={item.id}>{item.name}</MenuItem>
+          )),
         onChange: updateSprintList
       },
       {
-        placeholder: 'Title',
-        name: 'title'
+        placeholder: "title",
+        name: "title"
       },
       {
-        placeholder: 'Description',
-        name: 'description',
-        component: 'textarea',
-
-        rows: '4',
-        cols: '40'
+        placeholder: "description",
+        name: "description"
       },
       {
-        placeholder: 'Estimated time (minutes)',
-        name: 'time',
-        type: 'number'
+        placeholder: "estimated time (minutes)",
+        name: "time",
+        type: "number"
       },
       {
-        placeholder: 'Parent task (sprint)',
-        component: 'select',
-        name: 'sprint',
-        renderChildrenFn: () =>
-          sprintsList.map(item => <option value={item.id}>{item.title}</option>)
+        placeholder: "parent task (sprint)",
+        name: "sprint",
+        renderOptions: () =>
+          sprintsList.map(item => (
+            <MenuItem value={item.id}>{item.title}</MenuItem>
+          ))
       }
     ];
 
     return (
-      <div className='task_form_wrapper'>
+      <div className="task_form_wrapper">
         <Form>
-          <Container title='Create task form'>
+          <div>
+            <Typography variant="h5" gutterBottom>
+              Create task form
+            </Typography>
             {fieldsList.map(item => this.renderField(item))}
-            <Button primary type='submit'>
+            <Button variant="contained" color="secondary" type="submit">
               Submit
             </Button>
-          </Container>
+          </div>
         </Form>
       </div>
     );
