@@ -1,22 +1,22 @@
-import React from "react";
-import moment from "moment";
+import React from 'react';
+import moment from 'moment';
 
-import Button from "@material-ui/core/Button";
-import { Form } from "formik";
-import Typography from "@material-ui/core/Typography";
+import Button from '@material-ui/core/Button';
+import { Form } from 'formik';
+import Typography from '@material-ui/core/Typography';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
-} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
-import TextField from "@material-ui/core/TextField";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+} from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
-import withLoad from "./task_details-load.hoc";
-import { LoaderComponent } from "../../../loader";
-import formHoc from "./task_details-form.hoc.jsx";
-import "./index.css";
+import withLoad from './task_details-load.hoc';
+import { LoaderComponent } from '../../../loader';
+import formHoc from './task_details-form.hoc.jsx';
+import './index.css';
 
 class TaskDetails extends React.Component {
   state = {
@@ -36,7 +36,7 @@ class TaskDetails extends React.Component {
   }
 
   showPostForm = (index, taskId) => {
-    this.props.setFieldValue("taskId", taskId);
+    this.props.setFieldValue('taskId', taskId);
 
     this.setState({
       shownPostIndex: this.state.shownPostIndex === index ? undefined : index
@@ -52,13 +52,13 @@ class TaskDetails extends React.Component {
   renderTaskDetailsField = (label, value) =>
     value && (
       <>
-        <div className="title_label">
-          <Typography variant="subtitle1" gutterBottom>
+        <div className='title_label'>
+          <Typography variant='subtitle1' gutterBottom>
             {`${label}:`}
           </Typography>
         </div>
-        <div className="input_label">
-          <Typography variant="body1" gutterBottom>
+        <div className='input_label'>
+          <Typography variant='body1' gutterBottom>
             {value}
           </Typography>
         </div>
@@ -66,46 +66,49 @@ class TaskDetails extends React.Component {
     );
 
   renderPostForm = () => {
-    const { errors, touched, handleChange } = this.props;
+    const { errors, touched, handleChange, values, setFieldValue } = this.props;
+
     return (
       <>
         <div>
           <TextField
-            name="description"
-            id="description"
-            label="Description"
+            name='description'
+            id='description'
+            label='Description'
+            value={values.description}
             error={!!errors.description && touched.description}
             onChange={handleChange}
-            helperText={touched.description ? errors.description : ""}
+            helperText={touched.description ? errors.description : ''}
             fullWidth
           />
         </div>
         <div>
           <TextField
-            name="taken"
-            type="number"
-            id="taken"
-            label="Time taken (in hours)"
+            name='taken'
+            type='number'
+            id='taken'
+            value={values.taken}
+            label='Time taken (in hours)'
             error={!!errors.taken && touched.taken}
             onChange={handleChange}
-            helperText={touched.taken ? errors.taken : ""}
+            helperText={touched.taken ? errors.taken : ''}
             fullWidth
           />
         </div>
         <div>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
-              name="date"
+              name='date'
               disableToolbar
-              variant="inline"
-              format="MM/dd/yyyy"
-              margin="normal"
-              value={this.props.values.date}
+              variant='inline'
+              format='MM/dd/yyyy'
+              margin='normal'
+              value={values.date}
               onChange={value => {
-                this.props.setFieldValue("date", value);
+                setFieldValue('date', value);
               }}
               KeyboardButtonProps={{
-                "aria-label": "change date"
+                'aria-label': 'change date'
               }}
               maxDate={moment()}
               fullWidth
@@ -114,23 +117,25 @@ class TaskDetails extends React.Component {
         </div>
         <div>
           <TextField
-            name="taskId"
-            id="taskId"
-            label="Task id"
+            name='taskId'
+            value={values.taskId}
+            id='taskId'
+            label='Task id'
             fullWidth
             disabled
           />
         </div>
         <div>
           <TextField
-            name="projectId"
-            id="projectId"
-            label="Project id"
+            name='projectId'
+            value={values.projectId}
+            id='projectId'
+            label='Project id'
             fullWidth
             disabled
           />
         </div>
-        <Button variant="contained" color="primary" type="submit">
+        <Button variant='contained' color='primary' type='submit'>
           Post
         </Button>
       </>
@@ -144,76 +149,80 @@ class TaskDetails extends React.Component {
       uploadPage,
       setFieldValue,
       projectsList,
-      changeProjectId
+      changeProjectId,
+      values
     } = this.props;
 
     const { shownPostIndex } = this.state;
 
     const fieldsList = taskData.map(item => [
       {
-        label: "Task id",
+        label: 'Task id',
         value: item.id
       },
       {
-        label: "Task number",
+        label: 'Task number',
         value: taskNumber
       },
       {
-        label: "Description",
+        label: 'Description',
         value: item.description
       },
       {
-        label: "Path",
+        label: 'Path',
         value: item.pathHuman
       },
       {
-        label: "Time taken",
-        value: item["time-taken"]
+        label: 'Time taken',
+        value: item['time-taken']
       },
       {
-        label: "Time approve",
-        value: item["time-approved"]
+        label: 'Time approve',
+        value: item['time-approved']
       },
       {
-        label: "Time effort",
-        value: item["time-effort"]
+        label: 'Time effort',
+        value: item['time-effort']
       }
     ]);
 
     return (
       <div>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant='h5' gutterBottom>
           Task Info
         </Typography>
         <Form>
           {projectsList && projectsList.length ? (
-            <Select
-              name={"projectId"}
-              children={projectsList.map(item => (
-                <MenuItem value={item.id}>{item.name}</MenuItem>
-              ))}
-              onChange={e => {
-                changeProjectId(e.target.value);
-                setFieldValue("projectId", e.target.value);
-              }}
-            />
+            <div>
+              <Select
+                name={'projectId'}
+                value={values.projectId}
+                children={projectsList.map(item => (
+                  <MenuItem value={item.id}>{item.name}</MenuItem>
+                ))}
+                onChange={e => {
+                  changeProjectId(e.target.value);
+                  setFieldValue('projectId', e.target.value);
+                }}
+              />
+            </div>
           ) : (
-            ""
+            ''
           )}
 
           {taskNumber ? (
             <>
               {fieldsList.map((task, index) => (
                 <div>
-                  <Typography variant="h6" gutterBottom>
+                  <Typography variant='h6' gutterBottom>
                     {`Task # ${index + 1}`}
                   </Typography>
                   {task.map(({ label, value }) =>
                     this.renderTaskDetailsField(label, value)
                   )}
                   <Button
-                    type="button"
-                    variant="contained"
+                    type='button'
+                    variant='contained'
                     onClick={
                       shownPostIndex === index
                         ? this.closePostForm
@@ -221,21 +230,21 @@ class TaskDetails extends React.Component {
                     }
                   >
                     {`${
-                      shownPostIndex === index ? "Close" : "Open"
+                      shownPostIndex === index ? 'Close' : 'Open'
                     } Post Details`}
                   </Button>
 
                   {shownPostIndex === index && (
-                    <div className="postForm">{this.renderPostForm()} </div>
+                    <div className='postForm'>{this.renderPostForm()} </div>
                   )}
                 </div>
               ))}
               <Button
-                className="reloadBtn"
-                variant="contained"
-                color="secondary"
+                className='reloadBtn'
+                variant='contained'
+                color='secondary'
                 onClick={() => uploadPage()}
-                type="button"
+                type='button'
               >
                 Reload
               </Button>

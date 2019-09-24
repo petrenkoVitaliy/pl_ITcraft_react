@@ -1,25 +1,25 @@
-import React from "react";
-import { Form } from "formik";
-import Button from "@material-ui/core/Button";
-import MenuItem from "@material-ui/core/MenuItem";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
+import React from 'react';
+import { Form } from 'formik';
+import Button from '@material-ui/core/Button';
+import MenuItem from '@material-ui/core/MenuItem';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
 
-import withLoad from "./task_form-load.hoc";
-import formHoc from "./task_form-form.hoc";
-import "./index.css";
+import withLoad from './task_form-load.hoc';
+import formHoc from './task_form-form.hoc';
+import './index.css';
 
 class TaskForm extends React.Component {
   renderField = ({
-    type = "text",
+    type = 'text',
     name,
     placeholder,
     renderOptions,
     onChange
   }) => {
-    const { touched, errors } = this.props;
+    const { touched, errors, values } = this.props;
 
     const componentProps = {
       name,
@@ -30,7 +30,8 @@ class TaskForm extends React.Component {
       onChange: e => {
         onChange && onChange(e.target.value);
         this.props.setFieldValue(name, e.target.value);
-      }
+      },
+      value: values[name]
     };
 
     return (
@@ -47,7 +48,10 @@ class TaskForm extends React.Component {
           <TextField
             {...componentProps}
             type={type}
-            helperText={touched[name] ? errors[name] : ""}
+            helperText={touched[name] ? errors[name] : ''}
+            InputLabelProps={{
+              shrink: true
+            }}
           />
         )}
       </div>
@@ -62,8 +66,8 @@ class TaskForm extends React.Component {
 
     const fieldsList = [
       {
-        placeholder: "project",
-        name: "project",
+        placeholder: 'project',
+        name: 'project',
         renderOptions: () =>
           projects.map(item => (
             <MenuItem value={item.id}>{item.name}</MenuItem>
@@ -71,21 +75,21 @@ class TaskForm extends React.Component {
         onChange: updateSprintList
       },
       {
-        placeholder: "title",
-        name: "title"
+        placeholder: 'title',
+        name: 'title'
       },
       {
-        placeholder: "description",
-        name: "description"
+        placeholder: 'description',
+        name: 'description'
       },
       {
-        placeholder: "estimated time (minutes)",
-        name: "time",
-        type: "number"
+        placeholder: 'estimated time (minutes)',
+        name: 'time',
+        type: 'number'
       },
       {
-        placeholder: "parent task (sprint)",
-        name: "sprint",
+        placeholder: 'parent task (sprint)',
+        name: 'sprint',
         renderOptions: () =>
           sprintsList.map(item => (
             <MenuItem value={item.id}>{item.title}</MenuItem>
@@ -94,15 +98,15 @@ class TaskForm extends React.Component {
     ];
 
     return (
-      <div className="task_form_wrapper">
+      <div className='task_form_wrapper'>
         <Form>
           <div>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant='h5' gutterBottom>
               Create task form
             </Typography>
             {fieldsList.map(item => this.renderField(item))}
-            <div className="submitBtnWrapper">
-              <Button variant="contained" color="secondary" type="submit">
+            <div className='submitBtnWrapper'>
+              <Button variant='contained' color='secondary' type='submit'>
                 Submit
               </Button>
             </div>
