@@ -101,9 +101,11 @@ class TaskForm extends React.Component {
               Create task form
             </Typography>
             {fieldsList.map(item => this.renderField(item))}
-            <Button variant="contained" color="secondary" type="submit">
-              Submit
-            </Button>
+            <div className="submitBtnWrapper">
+              <Button variant="contained" color="secondary" type="submit">
+                Submit
+              </Button>
+            </div>
           </div>
         </Form>
       </div>

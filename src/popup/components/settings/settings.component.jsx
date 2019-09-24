@@ -65,9 +65,11 @@ export class Settings extends React.Component {
           {fieldsList.map(({ fieldName, placeHolder, disabled }) =>
             this.renderField(fieldName, placeHolder, disabled)
           )}
-          <Button variant="contained" color="secondary" type="submit">
-            Submit
-          </Button>
+          <div className="submitBtnWrapper">
+            <Button variant="contained" color="secondary" type="submit">
+              Submit
+            </Button>
+          </div>
         </div>
       </Form>
     );

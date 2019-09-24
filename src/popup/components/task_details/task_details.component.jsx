@@ -186,16 +186,20 @@ class TaskDetails extends React.Component {
           Task Info
         </Typography>
         <Form>
-          <Select
-            name={"projectId"}
-            children={projectsList.map(item => (
-              <MenuItem value={item.id}>{item.name}</MenuItem>
-            ))}
-            onChange={e => {
-              changeProjectId(e.target.value);
-              setFieldValue("projectId", e.target.value);
-            }}
-          />
+          {projectsList && projectsList.length ? (
+            <Select
+              name={"projectId"}
+              children={projectsList.map(item => (
+                <MenuItem value={item.id}>{item.name}</MenuItem>
+              ))}
+              onChange={e => {
+                changeProjectId(e.target.value);
+                setFieldValue("projectId", e.target.value);
+              }}
+            />
+          ) : (
+            ""
+          )}
 
           {taskNumber ? (
             <>
