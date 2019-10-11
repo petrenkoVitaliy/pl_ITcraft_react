@@ -1,72 +1,133 @@
 import React from 'react';
 import { Form } from 'formik';
+import classnames from 'classnames';
+
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
+import { withStyles } from '@material-ui/styles';
+import Box from '@material-ui/core/Box';
 
 import withLoad from './task_form-load.hoc';
 import formHoc from './task_form-form.hoc';
-import './index.css';
+
+const styles = {
+  field: {
+    borderRadius: '6px',
+    marginBottom: '20px',
+    height: 30
+  },
+  textArea: {
+    height: 'auto'
+  },
+  select: {
+    borderRadius: '6px',
+    marginBottom: '20px',
+    height: '30px'
+  },
+  fieldsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%'
+  },
+  button: {
+    width: '180px',
+    height: '35px',
+    borderRadius: '25px',
+    boxShadow: 'none',
+    margin: '20px 15px'
+  },
+  submitBtnWrapper: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  createTaskWrapper: {
+    height: '400px',
+    overflow: 'auto',
+    overflowX: 'hidden'
+  }
+};
 
 class TaskForm extends React.Component {
-  renderField = ({
-    type = 'text',
+  getFieldProps = ({ name, onChange }) => ({
     name,
-    placeholder,
-    renderOptions,
-    onChange
-  }) => {
-    const { touched, errors, values } = this.props;
+    id: name,
+    error: !!this.props.errors[name] && this.props.touched[name],
+    fullWidth: true,
+    onChange: e => {
+      onChange && onChange(e.target.value);
+      this.props.setFieldValue(name, e.target.value);
+    },
+    value: this.props.values[name],
+    variant: 'outlined'
+  });
 
-    const componentProps = {
-      name,
-      id: name,
-      label: placeholder,
-      error: !!errors[name] && touched[name],
-      fullWidth: true,
-      onChange: e => {
-        onChange && onChange(e.target.value);
-        this.props.setFieldValue(name, e.target.value);
-      },
-      value: values[name]
-    };
+  renderField = field => {
+    const { touched, errors, classes } = this.props;
+    const isPaired = Array.isArray(field);
+    const fieldsPair = isPaired ? field : [field];
 
     return (
-      <div key={name}>
-        {renderOptions ? (
-          <>
-            <InputLabel shrink>{placeholder}</InputLabel>
-            <Select
-              {...componentProps}
-              children={renderOptions && renderOptions()}
-            />
-          </>
-        ) : (
-          <TextField
-            {...componentProps}
-            type={type}
-            helperText={touched[name] ? errors[name] : ''}
-            InputLabelProps={{
-              shrink: true
-            }}
-          />
-        )}
-      </div>
+      <Box className={classes.fieldsWrapper}>
+        {fieldsPair.map(fieldData => {
+          const {
+            type = 'text',
+            name,
+            placeholder,
+            renderOptions,
+            multiline
+          } = fieldData;
+          return (
+            <Box key={name} style={{ width: isPaired ? '45%' : '100%' }}>
+              {renderOptions ? (
+                <>
+                  <InputLabel shrink>{placeholder}</InputLabel>
+                  <Select
+                    {...this.getFieldProps(fieldData)}
+                    children={renderOptions && renderOptions()}
+                    className={classes.select}
+                    style={{ width: '100%' }}
+                  />
+                </>
+              ) : (
+                <>
+                  <InputLabel shrink>{placeholder}</InputLabel>
+                  <TextField
+                    {...this.getFieldProps(fieldData)}
+                    multiline={multiline}
+                    rows={4}
+                    rowsMax={4}
+                    type={type}
+                    helperText={touched[name] ? errors[name] : ''}
+                    InputProps={{
+                      className: classnames(classes.field, {
+                        [classes.textArea]: multiline
+                      })
+                    }}
+                    style={{ width: '100%' }}
+                  />
+                </>
+              )}
+            </Box>
+          );
+        })}
+      </Box>
     );
   };
 
   render() {
     const {
       loadedData: { sprintsList, projects },
-      updateSprintList
+      updateSprintList,
+      classes
     } = this.props;
 
     const fieldsList = [
       {
-        placeholder: 'project',
+        placeholder: 'Project Name',
         name: 'project',
         renderOptions: () =>
           projects.map(item => (
@@ -75,46 +136,55 @@ class TaskForm extends React.Component {
         onChange: updateSprintList
       },
       {
-        placeholder: 'title',
+        placeholder: 'Task Name',
         name: 'title'
       },
       {
-        placeholder: 'description',
-        name: 'description'
+        placeholder: 'Description',
+        name: 'description',
+        multiline: true
       },
-      {
-        placeholder: 'estimated time (minutes)',
-        name: 'time',
-        type: 'number'
-      },
-      {
-        placeholder: 'parent task (sprint)',
-        name: 'sprint',
-        renderOptions: () =>
-          sprintsList.map(item => (
-            <MenuItem value={item.id}>{item.title}</MenuItem>
-          ))
-      }
+      [
+        {
+          placeholder: 'Effort time',
+          name: 'time',
+          type: 'number'
+        },
+        {
+          placeholder: 'Parent Task',
+          name: 'sprint',
+          renderOptions: () =>
+            sprintsList.map(item => (
+              <MenuItem value={item.id}>{item.title}</MenuItem>
+            ))
+        }
+      ]
     ];
 
     return (
-      <div className='task_form_wrapper'>
-        <Form>
-          <div>
-            <Typography variant='h5' gutterBottom>
-              Create task form
-            </Typography>
-            {fieldsList.map(item => this.renderField(item))}
-            <div className='submitBtnWrapper'>
-              <Button variant='contained' color='secondary' type='submit'>
-                Submit
-              </Button>
-            </div>
-          </div>
-        </Form>
-      </div>
+      <Form>
+        <Box className={classes.createTaskWrapper}>
+          {fieldsList.map(this.renderField)}
+        </Box>
+
+        <Box className={classes.submitBtnWrapper}>
+          <Button variant='outlined' color='primary' className={classes.button}>
+            Cancel
+          </Button>
+          <Button
+            variant='contained'
+            color='primary'
+            className={classes.button}
+            type='submit'
+          >
+            Save
+          </Button>
+        </Box>
+      </Form>
     );
   }
 }
 
-export const TaskFormComponent = withLoad(formHoc(TaskForm));
+export const TaskFormComponent = withStyles(styles)(
+  withLoad(formHoc(TaskForm))
+);

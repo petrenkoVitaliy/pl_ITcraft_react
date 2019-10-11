@@ -254,8 +254,8 @@ export class PlRequestsApiClass {
       body: JSON.stringify(data)
     }).then(response => response.json());
 
-    const task = this.__parseTaskDetails(res);
-    return task;
+    const tasks = this.__parseTaskDetails(res);
+    return tasks[0] || {};
   };
 
   __getProjectIdFromNumber = (taskNumber = '') => {

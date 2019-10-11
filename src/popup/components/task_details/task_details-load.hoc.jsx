@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react';
 
-import { ApiWrapper } from "../../../api";
+import { ApiWrapper } from '../../../api';
 
 const withLoad = Component => {
   return class extends React.Component {
     state = {
-      taskNumber: "",
+      taskNumber: '',
       taskData: [],
       projectsList: [],
-      projectId: ""
+      projectId: ''
     };
 
     async componentDidMount() {
@@ -29,17 +29,17 @@ const withLoad = Component => {
         taskNumber
       );
 
-      const formattedTaskData = taskData.map(task => ({
-        ...task,
-        "time-taken": `${(task["time-taken"] / 60).toFixed(1)} hours`,
-        "time-approved": `${(task["time-approved"] / 60).toFixed(1)} hours`,
-        "time-effort": `${(task["time-effort"] / 60).toFixed(1)} hours`
-      }));
-      const firstTask = taskData[0];
+      const formattedTaskData = {
+        ...taskData,
+        'time-taken': `${(taskData['time-taken'] / 60).toFixed(1)} hours`,
+        'time-approved': `${(taskData['time-approved'] / 60).toFixed(1)} hours`,
+        'time-effort': `${(taskData['time-effort'] / 60).toFixed(1)} hours`
+      };
+
       this.setState({
         taskData: formattedTaskData,
         projectsList,
-        projectId: projectId || (firstTask && firstTask["project-id"])
+        projectId: projectId || taskData['project-id']
       });
     };
 

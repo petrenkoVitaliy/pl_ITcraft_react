@@ -1,8 +1,9 @@
 import React from 'react';
 import moment from 'moment';
-
-import Button from '@material-ui/core/Button';
 import { Form } from 'formik';
+
+import InputLabel from '@material-ui/core/InputLabel';
+import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {
   MuiPickersUtilsProvider,
@@ -12,253 +13,241 @@ import DateFnsUtils from '@date-io/date-fns';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import Box from '@material-ui/core/Box';
+import { withStyles } from '@material-ui/styles';
 
 import withLoad from './task_details-load.hoc';
-import { LoaderComponent } from '../../../loader';
 import formHoc from './task_details-form.hoc.jsx';
-import './index.css';
+
+const styles = {
+  fieldsWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: '18.6px'
+  },
+  fieldWrapper: {
+    width: '100%'
+  },
+  field: {
+    width: '100%',
+    margin: 0
+  },
+  fieldInput: {
+    height: 30
+  },
+  select: {
+    height: 30,
+    width: '100%',
+    margin: 0,
+    marginBottom: '10px'
+  },
+  button: {
+    width: '180px',
+    height: '35px',
+    borderRadius: '25px',
+    boxShadow: 'none',
+    margin: '20px 15px'
+  },
+  submitBtnWrapper: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  text: {
+    color: '#19e455',
+    fontSize: '17px',
+    fontFamily: 'Helvetica',
+    fontWeight: 'bold',
+    textTransform: 'uppercase'
+  }
+};
 
 class TaskDetails extends React.Component {
-  state = {
-    shownPostIndex: undefined
-  };
-
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.isSubmitting === true &&
-      this.props.isSubmitting === false &&
-      this.props.values.taken
-    ) {
-      this.setState({
-        shownPostIndex: undefined
-      });
+  getCommonProps = name => ({
+    name,
+    id: name,
+    className: this.props.classes.field,
+    variant: 'outlined',
+    InputProps: {
+      className: this.props.classes.fieldInput
     }
-  }
-
-  showPostForm = (index, taskId) => {
-    this.props.setFieldValue('taskId', taskId);
-
-    this.setState({
-      shownPostIndex: this.state.shownPostIndex === index ? undefined : index
-    });
-  };
-
-  closePostForm = () => {
-    this.setState({
-      shownPostIndex: undefined
-    });
-  };
-
-  renderTaskDetailsField = (label, value) =>
-    value && (
-      <>
-        <div className='title_label'>
-          <Typography variant='subtitle1' gutterBottom>
-            {`${label}:`}
-          </Typography>
-        </div>
-        <div className='input_label'>
-          <Typography variant='body1' gutterBottom>
-            {value}
-          </Typography>
-        </div>
-      </>
-    );
-
-  renderPostForm = () => {
-    const { errors, touched, handleChange, values, setFieldValue } = this.props;
-
-    return (
-      <>
-        <div>
-          <TextField
-            name='description'
-            id='description'
-            label='Description'
-            value={values.description}
-            error={!!errors.description && touched.description}
-            onChange={handleChange}
-            helperText={touched.description ? errors.description : ''}
-            fullWidth
-          />
-        </div>
-        <div>
-          <TextField
-            name='taken'
-            type='number'
-            id='taken'
-            value={values.taken}
-            label='Time taken (in hours)'
-            error={!!errors.taken && touched.taken}
-            onChange={handleChange}
-            helperText={touched.taken ? errors.taken : ''}
-            fullWidth
-          />
-        </div>
-        <div>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
-              name='date'
-              disableToolbar
-              variant='inline'
-              format='MM/dd/yyyy'
-              margin='normal'
-              value={values.date}
-              onChange={value => {
-                setFieldValue('date', value);
-              }}
-              KeyboardButtonProps={{
-                'aria-label': 'change date'
-              }}
-              maxDate={moment()}
-              fullWidth
-            />
-          </MuiPickersUtilsProvider>
-        </div>
-        <div>
-          <TextField
-            name='taskId'
-            value={values.taskId}
-            id='taskId'
-            label='Task id'
-            fullWidth
-            disabled
-          />
-        </div>
-        <div>
-          <TextField
-            name='projectId'
-            value={values.projectId}
-            id='projectId'
-            label='Project id'
-            fullWidth
-            disabled
-          />
-        </div>
-        <Button variant='contained' color='primary' type='submit'>
-          Post
-        </Button>
-      </>
-    );
-  };
+  });
 
   render() {
     const {
       taskNumber,
       taskData = [],
-      uploadPage,
       setFieldValue,
-      projectsList,
+      projectsList = [],
       changeProjectId,
-      values
+      values,
+      errors,
+      touched,
+      handleChange,
+      classes
     } = this.props;
 
-    const { shownPostIndex } = this.state;
-
-    const fieldsList = taskData.map(item => [
-      {
-        label: 'Task id',
-        value: item.id
-      },
-      {
-        label: 'Task number',
-        value: taskNumber
-      },
-      {
-        label: 'Description',
-        value: item.description
-      },
-      {
-        label: 'Path',
-        value: item.pathHuman
-      },
-      {
-        label: 'Time taken',
-        value: item['time-taken']
-      },
-      {
-        label: 'Time approve',
-        value: item['time-approved']
-      },
-      {
-        label: 'Time effort',
-        value: item['time-effort']
-      }
-    ]);
-
     return (
-      <div>
-        <Typography variant='h5' gutterBottom>
-          Task Info
-        </Typography>
-        <Form>
-          {projectsList && projectsList.length ? (
-            <div>
-              <Select
-                name={'projectId'}
-                value={values.projectId}
-                children={projectsList.map(item => (
-                  <MenuItem value={item.id}>{item.name}</MenuItem>
-                ))}
-                onChange={e => {
-                  changeProjectId(e.target.value);
-                  setFieldValue('projectId', e.target.value);
-                }}
-              />
-            </div>
-          ) : (
-            ''
-          )}
-
-          {taskNumber ? (
-            <>
-              {fieldsList.map((task, index) => (
-                <div>
-                  <Typography variant='h6' gutterBottom>
-                    {`Task # ${index + 1}`}
-                  </Typography>
-                  {task.map(({ label, value }) =>
-                    this.renderTaskDetailsField(label, value)
-                  )}
-                  <Button
-                    type='button'
-                    variant='contained'
-                    onClick={
-                      shownPostIndex === index
-                        ? this.closePostForm
-                        : () => this.showPostForm(index, task[0].value)
-                    }
-                  >
-                    {`${
-                      shownPostIndex === index ? 'Close' : 'Open'
-                    } Post Details`}
-                  </Button>
-
-                  {shownPostIndex === index && (
-                    <div className='postForm'>{this.renderPostForm()} </div>
-                  )}
-                </div>
+      <Form>
+        <Box className={classes.fieldsWrapper}>
+          <Box className={classes.fieldWrapper} style={{ width: '70%' }}>
+            <InputLabel shrink>Project Id</InputLabel>
+            <Select
+              name='projectId'
+              id='projectId'
+              variant='outlined'
+              InputProps={{
+                className: this.props.classes.fieldInput
+              }}
+              value={values.projectId}
+              children={projectsList.map(item => (
+                <MenuItem value={item.id}>{item.name}</MenuItem>
               ))}
-              <Button
-                className='reloadBtn'
-                variant='contained'
-                color='secondary'
-                onClick={() => uploadPage()}
-                type='button'
-              >
-                Reload
-              </Button>
-            </>
-          ) : (
-            <>
-              <div>Cant find task number</div>
-              <LoaderComponent />
-            </>
-          )}
-        </Form>
-      </div>
+              onChange={e => {
+                changeProjectId(e.target.value);
+                setFieldValue('projectId', e.target.value);
+              }}
+              className={classes.select}
+            />
+          </Box>
+          <Box className={classes.fieldWrapper} style={{ width: '25%' }}>
+            <InputLabel shrink>Task number</InputLabel>
+            <TextField
+              {...this.getCommonProps('taskNumber')}
+              value={taskNumber}
+              error={!!errors.taskNumber && touched.taskNumber}
+              helperText={touched.taskNumber ? errors.taskNumber : ''}
+              disabled
+            />
+          </Box>
+        </Box>
+        <Box className={classes.fieldsWrapper}>
+          <Box className={classes.fieldWrapper}>
+            <InputLabel shrink>Task Name</InputLabel>
+            <TextField
+              {...this.getCommonProps('task-description')}
+              value={taskData.description}
+              disabled
+            />
+          </Box>
+        </Box>
+        <Box className={classes.fieldsWrapper}>
+          <Box className={classes.fieldWrapper} style={{ width: '25%' }}>
+            <Typography variant='h5' gutterBottom className={classes.text}>
+              post details
+            </Typography>
+          </Box>
+          <Box
+            className={classes.fieldWrapper}
+            style={{ borderBottom: '2px dashed #3f51b5', width: '75%' }}
+          ></Box>
+        </Box>
+        <Box className={classes.fieldsWrapper}>
+          <Box className={classes.fieldWrapper} style={{ width: '60%' }}>
+            <InputLabel shrink>Description</InputLabel>
+            <TextField
+              name='description'
+              id='description'
+              onChange={handleChange}
+              variant='outlined'
+              value={values.description}
+              error={!!errors.description && touched.description}
+              helperText={touched.description ? errors.description : ''}
+              multiline
+              rows={3}
+              rowsMax={3}
+              className={classes.field}
+            />
+          </Box>
+          <Box className={classes.fieldWrapper} style={{ width: '35%' }}>
+            <Box className={classes.fieldWrapper}>
+              <InputLabel shrink>Date</InputLabel>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <KeyboardDatePicker
+                  name='date'
+                  disableToolbar
+                  inputVariant='outlined'
+                  format='MM/dd/yyyy'
+                  margin='normal'
+                  value={values.date}
+                  onChange={value => {
+                    setFieldValue('date', value);
+                  }}
+                  KeyboardButtonProps={{
+                    'aria-label': 'change date'
+                  }}
+                  maxDate={moment()}
+                  className={classes.field}
+                  InputProps={{
+                    className: this.props.classes.fieldInput
+                  }}
+                  style={{ marginBottom: '17px' }}
+                />
+              </MuiPickersUtilsProvider>
+            </Box>
+            <Box>
+              <InputLabel shrink>Time Spend</InputLabel>
+              <TextField
+                {...this.getCommonProps('taken')}
+                type='number'
+                value={values.taken}
+                error={!!errors.taken && touched.taken}
+                onChange={handleChange}
+                helperText={touched.taken ? errors.taken : ''}
+              />
+            </Box>
+          </Box>
+        </Box>
+        <Box className={classes.fieldsWrapper}>
+          <Box
+            className={classes.fieldWrapper}
+            style={{ borderBottom: '2px dashed #3f51b5' }}
+          ></Box>
+        </Box>
+        <Box className={classes.fieldsWrapper}>
+          <Box className={classes.fieldWrapper} style={{ width: '30%' }}>
+            <InputLabel shrink>Time Taken</InputLabel>
+            <TextField
+              {...this.getCommonProps('time-taken')}
+              value={taskData['time-taken']}
+              disabled
+            />
+          </Box>
+          <Box className={classes.fieldWrapper} style={{ width: '30%' }}>
+            <InputLabel shrink>Time Approved</InputLabel>
+            <TextField
+              {...this.getCommonProps('time-approved')}
+              value={taskData['time-approved']}
+              disabled
+            />
+          </Box>
+          <Box className={classes.fieldWrapper} style={{ width: '30%' }}>
+            <InputLabel shrink>Time Effort</InputLabel>
+            <TextField
+              {...this.getCommonProps('time-effort')}
+              value={taskData['time-effort']}
+              disabled
+            />
+          </Box>
+        </Box>
+        <Box className={classes.submitBtnWrapper}>
+          <Button variant='outlined' color='primary' className={classes.button}>
+            Cancel
+          </Button>
+          <Button
+            variant='contained'
+            color='primary'
+            className={classes.button}
+            type='submit'
+          >
+            Post
+          </Button>
+        </Box>
+      </Form>
     );
   }
 }
 
-export const TaskDetailsComponent = withLoad(formHoc(TaskDetails));
+export const TaskDetailsComponent = withStyles(styles)(
+  withLoad(formHoc(TaskDetails))
+);
