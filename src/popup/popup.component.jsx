@@ -1,9 +1,10 @@
 import React from 'react';
-import classnames from 'classnames';
 
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/styles';
 import Box from '@material-ui/core/Box';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 import { ApiWrapper } from '../api';
 import { SettingsComponent } from './components/settings';
@@ -11,32 +12,27 @@ import { TaskDetailsComponent } from './components/task_details';
 import { TaskFormComponent } from './components/task_form';
 
 const styles = {
-  button: {
-    height: '40px',
+  tab: {
+    color: 'white',
     borderRadius: '10px 10px 0 0',
-    fontFamily: 'Helvetica',
-    color: '#ffffff',
-    boxShadow: 'none',
-    border: 'none',
-    fontSize: '18px'
+    backgroundColor: '#20274e',
+    opacity: 1
   },
-  wideButton: {
-    width: '250px'
+  smallTab: {
+    maxWidth: '50px'
   },
-  smallButton: {
-    maxWidth: '50px',
-    minWidth: '50px'
+  tabsHeader: {
+    boxShadow: 'none'
   },
+  activeTab: {
+    backgroundColor: '#525ea1',
+    borderRadius: '10px 10px 0 0',
+    opacity: 1
+  },
+  tabs: { backgroundColor: 'white' },
+  indicator: { backgroundColor: '#20274e', height: '5px' },
   icon: {
     width: '25px'
-  },
-  menuWrapper: {
-    width: '100%'
-  },
-  bottomLine: {
-    width: '100%',
-    backgroundColor: '#20274e',
-    height: '7px'
   },
   popupWrapper: {
     width: '550px',
@@ -65,16 +61,16 @@ const styles = {
 class PopupComponent extends React.Component {
   tabsList = {
     postTime: {
-      component: <TaskDetailsComponent />,
-      key: 'post time'
+      component: TaskDetailsComponent,
+      key: 0
     },
     newTask: {
-      component: <TaskFormComponent />,
-      key: 'new task'
+      component: TaskFormComponent,
+      key: 1
     },
     settings: {
-      component: <SettingsComponent />,
-      key: 'settings'
+      component: SettingsComponent,
+      key: 2
     }
   };
 
@@ -93,8 +89,22 @@ class PopupComponent extends React.Component {
     this.setState({ selectedTab: this.tabsList.postTime.key });
   }
 
-  handleTabClick = tabKey => () =>
+  handleTabClick = (e, tabKey) => this.changeActiveTab(tabKey);
+
+  changeActiveTab = tabKey =>
     this.state.selectedTab !== tabKey && this.setState({ selectedTab: tabKey });
+
+  getTabsProps = (index, additionalClass) => ({
+    id: `tab-${index}`,
+    'aria-controls': `tabpanel-${index}`,
+    className: `${additionalClass}
+      ${
+        this.state.selectedTab === index
+          ? this.props.classes.activeTab
+          : this.props.classes.tab
+      }`,
+    classes: { root: this.props.classes.tab }
+  });
 
   render() {
     const { selectedTab } = this.state;
@@ -105,42 +115,49 @@ class PopupComponent extends React.Component {
 
     return (
       <Box className={classes.popupWrapper}>
-        <Box className={classes.menuWrapper}>
-          <Button
-            className={classnames(classes.wideButton, classes.button)}
-            variant='contained'
-            color='primary'
-            onClick={this.handleTabClick(this.tabsList.postTime.key)}
+        <AppBar position='static' className={classes.tabsHeader}>
+          <Tabs
+            value={selectedTab}
+            onChange={this.handleTabClick}
+            variant='fullWidth'
+            className={classes.tabs}
+            indicatorColor='primary'
+            classes={{
+              indicator: classes.indicator
+            }}
           >
-            {this.tabsList.postTime.key}
-          </Button>
-          <Button
-            className={classnames(classes.wideButton, classes.button)}
-            variant='contained'
-            color='primary'
-            onClick={this.handleTabClick(this.tabsList.newTask.key)}
-          >
-            {this.tabsList.newTask.key}
-          </Button>
-          <Button
-            className={classnames(classes.smallButton, classes.button)}
-            variant='contained'
-            color='secondary'
-            onClick={this.handleTabClick(this.tabsList.settings.key)}
-          >
-            <img
-              className={classes.icon}
-              src='/img/settings.svg'
-              alt='settings menu'
+            <Tab
+              label='post time'
+              {...this.getTabsProps(this.tabsList.postTime.key)}
             />
-          </Button>
-          <Box className={classes.bottomLine} />
-        </Box>
+            <Tab
+              label='new task'
+              {...this.getTabsProps(this.tabsList.newTask.key)}
+            />
+            <Tab
+              icon={
+                <img
+                  className={classes.icon}
+                  src='/img/settings.svg'
+                  alt='settings menu'
+                />
+              }
+              {...this.getTabsProps(
+                this.tabsList.settings.key,
+                classes.smallTab
+              )}
+            />
+          </Tabs>
+        </AppBar>
         <Box className={classes.tabWrapper}>
-          {selectedComponent
-            ? selectedComponent.component
-            : `something has been broken, the world in a danger, 
-          run away...`}
+          {selectedComponent ? (
+            <selectedComponent.component
+              changeActiveTab={this.changeActiveTab}
+            />
+          ) : (
+            `something has been broken, the world in a danger, 
+          run away...`
+          )}
         </Box>
       </Box>
     );

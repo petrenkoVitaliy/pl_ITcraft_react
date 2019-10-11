@@ -168,7 +168,12 @@ class TaskForm extends React.Component {
         </Box>
 
         <Box className={classes.submitBtnWrapper}>
-          <Button variant='outlined' color='primary' className={classes.button}>
+          <Button
+            variant='outlined'
+            color='primary'
+            className={classes.button}
+            onClick={() => this.props.changeActiveTab(0)}
+          >
             Cancel
           </Button>
           <Button
