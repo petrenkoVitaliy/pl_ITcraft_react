@@ -1,29 +1,29 @@
-import { Logger } from 'helpers';
+import { Logger } from "helpers";
 
-const moduleName = 'PL_API';
+const moduleName = "PL_API";
 
 export class PlRequestsApiClass {
   constructor({ userKey, managerKey } = {}) {
     this.requestData = {
-      'user-key': userKey,
-      'manager-key': managerKey,
-      'app-key': 'bc171976c01f30e8ce8bbe9cb0333942:jbjBAsLK3hkGwQE7QQ^Z',
-      'project-id': '',
-      'per-page': -1 // full data on one page,
+      "user-key": userKey,
+      "manager-key": managerKey,
+      "app-key": "bc171976c01f30e8ce8bbe9cb0333942:jbjBAsLK3hkGwQE7QQ^Z",
+      "project-id": "",
+      "per-page": -1 // full data on one page,
       // 'parent-id': 205696
     };
 
     this.projectsList = [];
-    this.tasksList = '';
-    this.sprintIds = '';
-    this.basicUrl = 'https://pl.itcraft.co/api/client-v1';
+    this.tasksList = "";
+    this.sprintIds = "";
+    this.basicUrl = "https://pl.itcraft.co/api/client-v1";
   }
 
   setUserData = (data = {}) => {
     this.requestData = {
       ...this.requestData,
-      'user-key': data.userKey,
-      'manager-key': data.managerKey
+      "user-key": data.userKey,
+      "manager-key": data.managerKey
     };
     this.projectsList = data.projectsMap ? data.projectsMap : this.projectsList;
   };
@@ -33,11 +33,13 @@ export class PlRequestsApiClass {
     projectsList: this.projectsList
   });
 
-  getProjectsByTitle = (taskNumber = '') => {
+  getProjectsByTitle = (taskNumber = "") => {
     const projects =
-      this.projectsList.filter(
-        ({ code }) => taskNumber.includes(code) && code
-      ) || {};
+      this.projectsList.filter(({ code }) => {
+        const separatedCodes = code.split(" ").filter(Boolean);
+
+        return separatedCodes.some(code => taskNumber.includes(code));
+      }) || {};
     return projects;
   };
 
@@ -49,7 +51,7 @@ export class PlRequestsApiClass {
     return details;
   };
 
-  getTaskDetailsFromAllSprints = async (taskNumber = '') => {
+  getTaskDetailsFromAllSprints = async (taskNumber = "") => {
     this.sprintIds = await this.__getSprintsIdsList();
     this.tasksList = await this.__getTasksList(this.sprintIds);
 
@@ -57,12 +59,12 @@ export class PlRequestsApiClass {
 
     Logger.log(
       moduleName,
-      `found task from all sprints:  ${task ? task.id : 'none'}`
+      `found task from all sprints:  ${task ? task.id : "none"}`
     );
     return task;
   };
 
-  getTaskFromAllProject = async (taskNumber = '') => {};
+  getTaskFromAllProject = async (taskNumber = "") => {};
 
   getSprints = async projectId => {
     this.sprintIds = await this.__getSprints(projectId);
@@ -111,19 +113,19 @@ export class PlRequestsApiClass {
   __getSprints = async projectId => {
     const data = {
       ...this.requestData,
-      'project-id': projectId
+      "project-id": projectId
     };
 
     const res = await fetch(`${this.basicUrl}/tasks/list`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
     }).then(response => response.json());
 
     const taskIds = this.__parseTaskDetails(res);
-    const sprintIds = taskIds.filter(({ hc }) => hc === '1'); // has children
+    const sprintIds = taskIds.filter(({ hc }) => hc === "1"); // has children
 
     Logger.log(moduleName, `found sprints:  ${sprintIds.length}`);
     return sprintIds;
@@ -135,14 +137,14 @@ export class PlRequestsApiClass {
       description,
       effort: time,
       title: title,
-      'parent-id': sprint,
-      'project-id': project
+      "parent-id": sprint,
+      "project-id": project
     };
 
     const res = await fetch(`${this.basicUrl}/tasks/add`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
     }).then(response => response.json());
@@ -157,16 +159,16 @@ export class PlRequestsApiClass {
     const data = {
       ...this.requestData,
       description,
-      'task-id': taskId,
-      'project-id': projectId,
+      "task-id": taskId,
+      "project-id": projectId,
       taken,
       date
     };
 
     const res = await fetch(`${this.basicUrl}/posts/add`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
     }).then(response => response.json());
@@ -181,9 +183,9 @@ export class PlRequestsApiClass {
     };
 
     const res = await fetch(`${this.basicUrl}/projects/list`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
     }).then(response => response.json());
@@ -191,7 +193,7 @@ export class PlRequestsApiClass {
     const parsedData =
       res &&
       res.projects &&
-      res.projects.map(({ id, name }) => ({ id, name, code: '`none`' }));
+      res.projects.map(({ id, name }) => ({ id, name, code: "" }));
 
     return parsedData || [];
   };
@@ -200,12 +202,12 @@ export class PlRequestsApiClass {
     const data = { ...this.requestData };
 
     const queries = sprintsIdsList.map(async item => {
-      data['parent-id'] = item; // to find task inside this sprint
+      data["parent-id"] = item; // to find task inside this sprint
 
       const res = await fetch(`${this.basicUrl}/tasks/list`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
       }).then(response => response.json());
@@ -242,14 +244,14 @@ export class PlRequestsApiClass {
     const data = {
       ...this.requestData,
       query: taskNumber,
-      'project-id': projectId,
-      'search-depth': 'project'
+      "project-id": projectId,
+      "search-depth": "project"
     };
 
     const res = await fetch(`${this.basicUrl}/tasks/list`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
     }).then(response => response.json());
@@ -258,10 +260,13 @@ export class PlRequestsApiClass {
     return tasks[0] || {};
   };
 
-  __getProjectIdFromNumber = (taskNumber = '') => {
+  __getProjectIdFromNumber = (taskNumber = "") => {
     const currentProject =
-      this.projectsList.find(({ code }) => taskNumber.includes(code) && code) ||
-      {};
+      this.projectsList.find(({ code }) => {
+        const separatedCodes = code.split(" ").filter(Boolean);
+
+        return separatedCodes.some(code => taskNumber.includes(code));
+      }) || {};
 
     return currentProject.id;
   };
