@@ -13,20 +13,14 @@ const formHoc = withFormik({
     description: "",
     taken: "",
     date: moment(),
-    taskId: "",
+    taskId: props.taskData.id,
     projectId: props.projectId
   }),
 
   validate: values =>
-    Validator.required(values, [
-      "description",
-      "taken",
-      "date",
-      "projectId",
-      "taskId"
-    ]),
+    Validator.required(values, ["description", "taken", "date"]),
 
-  handleSubmit: async (values, { setSubmitting }) => {
+  handleSubmit: async (values, { props, setSubmitting }) => {
     Logger.log(moduleName, `submitted data  ${JSON.stringify(values)}`);
     const formattedValues = {
       ...values,
@@ -37,6 +31,7 @@ const formHoc = withFormik({
 
     alert("Posted!");
     setSubmitting(false);
+    props.uploadPage();
   }
 });
 
