@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Pl ITechCraft extension",
   "author": "vitt",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "",
   "icons": {
     "16": "icon.png",
@@ -14,7 +14,8 @@
     "storage",
     "declarativeContent",
     "notifications",
-    "https://flexwisehealth.atlassian.net/browse/*"
+    "http://*/",
+    "https://*/"
   ],
   "browser_action": {
     "default_popup": "index.html"
