@@ -33,6 +33,7 @@ const formHoc = withFormik({
     alert("Created!");
 
     setSubmitting(false);
+    props.changeActiveTab(0);
   }
 });
 

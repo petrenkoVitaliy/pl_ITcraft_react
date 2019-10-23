@@ -203,9 +203,10 @@ class TaskDetails extends React.Component {
                   </MuiPickersUtilsProvider>
                 </Box>
                 <Box>
-                  <InputLabel shrink>Time Spend</InputLabel>
+                  <InputLabel shrink>Time Spend (in hours)</InputLabel>
                   <TextField
                     {...this.getCommonProps("taken")}
+                    placeholder="ex. 0.25 (15 min)"
                     type="number"
                     value={values.taken}
                     error={!!errors.taken && touched.taken}

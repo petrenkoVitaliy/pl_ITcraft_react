@@ -32,7 +32,10 @@ export class JiraApiClass {
       }
       chrome.tabs.executeScript(
         {
-          code: `(document.querySelector("*[data-test-id='issue.views.issue-base.foundation.summary.heading']") || document.querySelector('[aria-label="Edit Summary"]').parentElement.children[0].innerText).innerText`
+          code: `(
+              document.querySelector("*[data-test-id='issue.views.issue-base.foundation.summary.heading']") || 
+              document.querySelector('[aria-label="Edit Summary"]').parentElement.children[0]
+          ).innerText`
         },
         result => {
           Logger.log(moduleName, `founded task title: ${result}`);
