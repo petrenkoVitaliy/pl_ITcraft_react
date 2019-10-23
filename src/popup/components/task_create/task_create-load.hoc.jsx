@@ -1,5 +1,9 @@
 import React from "react";
+import { Logger } from "helpers";
+
 import { ApiWrapper } from "../../../api";
+
+const moduleName = "CREATE-TASK_LOAD_HOC";
 
 const withLoad = Component => {
   return class extends React.Component {
@@ -35,14 +39,18 @@ const withLoad = Component => {
       );
       const isTaskAlreadyCreated = createdTaskData && createdTaskData.id;
 
-      this.setState({
-        title: `${taskNumber} ${title || ""}`,
-        projects,
-        projectId,
-        isTaskAlreadyCreated,
-        sprintsList,
-        lastSprintId
-      });
+      this.setState(
+        {
+          title: `${taskNumber} ${title || ""}`,
+          projects,
+          projectId,
+          isTaskAlreadyCreated,
+          sprintsList,
+          lastSprintId
+        },
+        () =>
+          Logger.log(moduleName, `loaded data  ${JSON.stringify(this.state)}`)
+      );
     };
 
     render() {

@@ -1,6 +1,9 @@
 import React from "react";
+import { Logger } from "helpers";
 
 import { ApiWrapper } from "../../../api";
+
+const moduleName = "TASK-DETAILS_LOAD_HOC";
 
 const withLoad = Component => {
   return class extends React.Component {
@@ -36,11 +39,15 @@ const withLoad = Component => {
         "time-effort": `${(taskData["time-effort"] / 60).toFixed(1)} hours`
       };
 
-      this.setState({
-        taskData: formattedTaskData,
-        projectsList,
-        projectId: taskData["project-id"]
-      });
+      this.setState(
+        {
+          taskData: formattedTaskData,
+          projectsList,
+          projectId: taskData["project-id"]
+        },
+        () =>
+          Logger.log(moduleName, `loaded data  ${JSON.stringify(this.state)}`)
+      );
     };
 
     getTaskNumber = async () => {
