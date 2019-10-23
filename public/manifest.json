@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Pl ITechCraft extension",
   "author": "vitt",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "",
   "icons": {
     "16": "icon.png",
